@@ -725,7 +725,7 @@ async function confirm_dedupe ({ file_number, folder_number }) {
   const answer = await prompts({
     type: 'select',
     name: 'value',
-    message: `Duplicate file detected in the same location${file_number}，Duplicate Folders${folder_number}，Delete them？`,
+    message: `Duplicate files ${file_number}，Duplicate Folders ${folder_number}，Delete them？`,
     choices: [
       { title: 'Yes', description: 'confirm deletion', value: 'yes' },
       { title: 'No', description: 'Do not Delete', value: 'no' }
@@ -735,7 +735,7 @@ async function confirm_dedupe ({ file_number, folder_number }) {
   return answer.value
 }
 
-// Need sa to be the manager of the drive where the source folder is located
+// SA Should be added as Manager in Source Teamdrive
 async function mv_file ({ fid, new_parent, service_account }) {
   const file = await get_info_by_id(fid)
   if (!file) return
@@ -751,14 +751,14 @@ async function mv_file ({ fid, new_parent, service_account }) {
   return axins.patch(url, {}, { headers })
 }
 
-// Move files or folders to the trash，Sa should be added as content manager or above
+// Move files or folders to the trash，SA should be added as content manager or above
 async function trash_file ({ fid, service_account }) {
   const url = `https://www.googleapis.com/drive/v3/files/${fid}?supportsAllDrives=true`
   const headers = await gen_headers(service_account)
   return axins.patch(url, { trashed: true }, { headers })
 }
 
-// Delete files or folders directly，Will not go to Trash，Sa should be added as manager
+// Delete files or folders directly，Will not go to Trash，SA should be added as manager
 async function rm_file ({ fid, service_account }) {
   const headers = await gen_headers(service_account)
   let retry = 0
