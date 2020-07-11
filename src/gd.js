@@ -196,7 +196,7 @@ async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
 
   const loop = setInterval(() => {
     const now = dayjs().format('HH:mm:ss')
-    const message = `${now} | 已获取对象 ${result.length} | 网络请求 进行中${limit.activeCount}/排队中${limit.pendingCount}`
+    const message = `${now} | Copied ${result.length} | Ongoing ${limit.activeCount}/Pending ${limit.pendingCount}`
     print_progress(message)
   }, 1000)
 
@@ -227,8 +227,8 @@ async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
   } catch (e) {
     console.error(e)
   }
-  console.log('\n信息获取完毕')
-  not_finished.length ? console.log('未读取完毕的目录ID：', JSON.stringify(not_finished)) : console.log('所有目录读取完毕')
+  console.log('\nChecking is Complete')
+  not_finished.length ? console.log('未读取完毕的目录ID：', JSON.stringify(not_finished)) : console.log('All folders are read')
   clearInterval(loop)
   const smy = summary(result)
   db.prepare('UPDATE gd SET summary=?, mtime=? WHERE fid=?').run(JSON.stringify(smy), Date.now(), fid)
@@ -726,6 +726,14 @@ function find_dupe (arr) {
 
 async function confirm_dedupe ({ file_number, folder_number }) {
   const answer = await prompts({
+    type: 'text',
+    name: 'value',
+    message: `found ${file_number} dupe files, dupe empty ${folder_number} folders, confirm trash?(yes/no)`,
+    validate: value => ['yes', 'no'].includes(value) ? true : 'must enter yes or no'
+  })
+  return answer.value
+}
+  const answer = await prompts({
     type: 'select',
     name: 'value',
     message: `Duplicate files ${file_number}个，Duplicate folders ${folder_number}个，Delete them？`,
@@ -810,7 +818,7 @@ async function dedupe ({ fid, update, service_account }) {
         file_count++
       }
     } catch (e) {
-      console.log('删除失败', v)
+      console.log('Failed to Delete', v)
       handle_error(e)
     }
   }))
