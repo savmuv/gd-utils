@@ -726,6 +726,14 @@ function find_dupe (arr) {
 
 async function confirm_dedupe ({ file_number, folder_number }) {
   const answer = await prompts({
+    type: 'text',
+    name: 'value',
+    message: `found ${file_number} dupe files, dupe empty ${folder_number} folders, confirm trash?(yes/no)`,
+    validate: value => ['yes', 'no'].includes(value) ? true : 'must enter yes or no'
+  })
+  return answer.value
+}
+  const answer = await prompts({
     type: 'select',
     name: 'value',
     message: `Duplicate files ${file_number}，Duplicate Folders ${folder_number}，Delete them？`,
