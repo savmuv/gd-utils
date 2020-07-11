@@ -21,7 +21,7 @@ const proxy_url = https_proxy || http_proxy || all_proxy
 
 let axins
 if (proxy_url) {
-  console.log('使用代理：', proxy_url)
+  console.log('Use proxy：', proxy_url)
   let ProxyAgent
   try {
     ProxyAgent = require('proxy-agent')
@@ -75,7 +75,7 @@ handle_exit(() => {
 
 async function gen_count_body ({ fid, type, update, service_account }) {
   async function update_info () {
-    const info = await walk_and_save({ fid, update, service_account }) // 这一步已经将fid记录存入数据库中了
+    const info = await walk_and_save({ fid, update, service_account }) // This step has already stored the fid record in the database
     const row = db.prepare('SELECT summary from gd WHERE fid=?').get(fid)
     if (!row) return []
     return [info, JSON.parse(row.summary)]
@@ -174,7 +174,7 @@ function get_all_by_fid (fid) {
     if (!subf.length) return result
     const arr = subf.map(v => {
       const row = db.prepare('SELECT * FROM gd WHERE fid = ?').get(v)
-      if (!row) return null // 如果没找到对应的fid记录，The last time the process was interrupted or the directory read was not completed
+      if (!row) return null // If no corresponding fid record is found，The last time the process was interrupted or the directory read was not completed
       let info = JSON.parse(row.info)
       info = info.map(vv => {
         vv.parent = v
@@ -196,7 +196,7 @@ async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
 
   const loop = setInterval(() => {
     const now = dayjs().format('HH:mm:ss')
-    const message = `${now} | Copied objects ${result.length} | Ongoing${limit.activeCount}/Pending${limit.pendingCount}`
+    const message = `${now} | Copied objects ${result.length} | Ongoing ${limit.activeCount}/Pending ${limit.pendingCount}`
     print_progress(message)
   }, 1000)
 
@@ -259,7 +259,7 @@ async function ls_folder ({ fid, not_teamdrive, service_account }) {
   params.orderBy = 'folder,name desc'
   params.fields = 'nextPageToken, files(id, name, mimeType, size, md5Checksum)'
   params.pageSize = Math.min(PAGE_SIZE, 1000)
-  // const use_sa = (fid !== 'root') && (service_account || !not_teamdrive) // 不带参数默认使用sa
+  // const use_sa = (fid !== 'root') && (service_account || !not_teamdrive) // Without parameters, use sa by default
   const use_sa = (fid !== 'root') && service_account
   const headers = await gen_headers(use_sa)
   do {
@@ -279,7 +279,7 @@ async function ls_folder ({ fid, not_teamdrive, service_account }) {
       }
     }
     if (!data) {
-      console.error('读取目录未完成(部分读取), 参数:', params)
+      console.error('Reading Folder is not complete (partial reading), Parameter:', params)
       files.not_finished = true
       return files
     }
@@ -417,7 +417,7 @@ async function user_choose () {
   const answer = await prompts({
     type: 'select',
     name: 'value',
-    message: 'The last copyied record was detected，Whether to continue？',
+    message: 'The last copy's record is detected，Do you want to continue？',
     choices: [
       { title: 'Continue', description: 'Continue from where it was last interrupted', value: 'continue' },
       { title: 'Restart', description: 'Ignore all Files，Restart', value: 'restart' },
