@@ -417,11 +417,11 @@ async function user_choose () {
   const answer = await prompts({
     type: 'select',
     name: 'value',
-    message: '检测到上次的复制记录，是否继续？',
+    message: 'Do you want to resume？',
     choices: [
-      { title: 'Continue', description: '从上次中断的地方继续', value: 'continue' },
-      { title: 'Restart', description: '无视已存在的记录，重新复制', value: 'restart' },
-      { title: 'Exit', description: '直接退出', value: 'exit' }
+      { title: 'Continue', description: 'Resume the Process', value: 'continue' },
+      { title: 'Restart', description: 'Restart the Process', value: 'restart' },
+      { title: 'Exit', description: 'Exit', value: 'exit' }
     ],
     initial: 0
   })
@@ -461,7 +461,7 @@ async function real_copy ({ source, target, name, min_size, update, dncnr, not_t
     const copied = db.prepare('select fileid from copied where taskid=?').all(record.id).map(v => v.fileid)
     const choice = is_server ? 'continue' : await user_choose()
     if (choice === 'exit') {
-      return console.log('退出程序')
+      return console.log('Exitting')
     } else if (choice === 'continue') {
       let { mapping } = record
       const old_mapping = {}
@@ -475,8 +475,8 @@ async function real_copy ({ source, target, name, min_size, update, dncnr, not_t
       let files = arr.filter(v => v.mimeType !== FOLDER_TYPE).filter(v => !copied_ids[v.id])
       if (min_size) files = files.filter(v => v.size >= min_size)
       const folders = arr.filter(v => v.mimeType === FOLDER_TYPE)
-      console.log('待复制的目录数：', folders.length)
-      console.log('待复制的文件数：', files.length)
+      console.log('Number of Folders to be copied：', folders.length)
+      console.log('Number of files to be copied：', files.length)
       const all_mapping = await create_folders({
         old_mapping,
         source,
@@ -499,8 +499,8 @@ async function real_copy ({ source, target, name, min_size, update, dncnr, not_t
       let files = arr.filter(v => v.mimeType !== FOLDER_TYPE)
       if (min_size) files = files.filter(v => v.size >= min_size)
       const folders = arr.filter(v => v.mimeType === FOLDER_TYPE)
-      console.log('待复制的目录数：', folders.length)
-      console.log('待复制的文件数：', files.length)
+      console.log('Number of Folders to be copied：', folders.length)
+      console.log('Number of files to be copied：', files.length)
       const mapping = await create_folders({
         source,
         folders,
@@ -513,7 +513,7 @@ async function real_copy ({ source, target, name, min_size, update, dncnr, not_t
       return { id: new_root.id, task_id: record.id }
     } else {
       // ctrl+c 退出
-      return console.log('退出程序')
+      return console.log('Exitting')
     }
   } else {
     const new_root = await get_new_root()
@@ -523,8 +523,8 @@ async function real_copy ({ source, target, name, min_size, update, dncnr, not_t
     let files = arr.filter(v => v.mimeType !== FOLDER_TYPE)
     if (min_size) files = files.filter(v => v.size >= min_size)
     const folders = arr.filter(v => v.mimeType === FOLDER_TYPE)
-    console.log('待复制的目录数：', folders.length)
-    console.log('待复制的文件数：', files.length)
+    console.log('Number of Folders to be copied：', folders.length)
+    console.log('Number of files to be copied：', files.length)
     const mapping = await create_folders({
       source,
       folders,
@@ -540,11 +540,11 @@ async function real_copy ({ source, target, name, min_size, update, dncnr, not_t
 
 async function copy_files ({ files, mapping, service_account, root, task_id }) {
   if (!files.length) return
-  console.log('\n开始复制文件，总数：', files.length)
+  console.log('\nStart copying files, Total：', files.length)
 
   const loop = setInterval(() => {
     const now = dayjs().format('HH:mm:ss')
-    const message = `${now} | 已复制文件数 ${count} | 排队中文件数 ${files.length}`
+    const message = `${now} | Number of files copied ${count} | Number of files Pending ${files.length}`
     print_progress(message)
   }, 1000)
 
@@ -585,7 +585,7 @@ async function copy_files ({ files, mapping, service_account, root, task_id }) {
   // const loop = setInterval(() => {
   //   const now = dayjs().format('HH:mm:ss')
   //   const {activeCount, pendingCount} = limit
-  //   const message = `${now} | 已复制文件数 ${count} | 网络请求 进行中${activeCount}/排队中${pendingCount}`
+  //   const message = `${now} | Number of files copied ${count} | Ongoing Transfers 中${activeCount}/Pending Transfers ${pendingCount}`
   //   print_progress(message)
   // }, 1000)
   // return Promise.all(files.map(async file => {
@@ -625,21 +625,21 @@ async function copy_file (id, parent, use_sa, limit, task_id) {
       if (message && message.toLowerCase().includes('file limit')) {
         if (limit) limit.clearQueue()
         if (task_id) db.prepare('update task set status=? where id=?').run('error', task_id)
-        throw new Error('您的团队盘文件数已超限，停止复制')
+        throw new Error('Your team drive file limit has been exceeded, stop copying')
       }
       if (use_sa && message && message.toLowerCase().includes('rate limit')) {
         SA_TOKENS = SA_TOKENS.filter(v => v.gtoken !== gtoken)
         if (!SA_TOKENS.length) SA_TOKENS = get_sa_batch()
-        console.log('此帐号触发使用限额，剩余可用service account帐号数量：', SA_TOKENS.length)
+        console.log('This account triggers a usage limit，Number of remaining available service account accounts：', SA_TOKENS.length)
       }
     }
   }
   if (use_sa && !SA_TOKENS.length) {
     if (limit) limit.clearQueue()
     if (task_id) db.prepare('update task set status=? where id=?').run('error', task_id)
-    throw new Error('所有SA帐号流量已用完')
+    throw new Error('All SA accounts exhausted')
   } else {
-    console.warn('复制文件失败，文件id: ' + id)
+    console.warn('File copy failed, fileid: ' + id)
   }
 }
 
@@ -650,14 +650,14 @@ async function create_folders ({ source, old_mapping, folders, root, task_id, se
   if (!folders.length) return mapping
 
   const missed_folders = folders.filter(v => !mapping[v.id])
-  console.log('开始复制文件夹，总数：', missed_folders.length)
+  console.log('Start copying folders, Total：', missed_folders.length)
   const limit = pLimit(PARALLEL_LIMIT)
   let count = 0
   let same_levels = folders.filter(v => v.parent === folders[0].parent)
 
   const loop = setInterval(() => {
     const now = dayjs().format('HH:mm:ss')
-    const message = `${now} | 已创建目录 ${count} | 网络请求 进行中${limit.activeCount}/排队中${limit.pendingCount}`
+    const message = `${now} | Folder created ${count} | Ongoing ${limit.activeCount}/Pending ${limit.pendingCount}`
     print_progress(message)
   }, 1000)
 
@@ -677,7 +677,7 @@ async function create_folders ({ source, old_mapping, folders, root, task_id, se
           clearInterval(loop)
           throw new Error(FILE_EXCEED_MSG)
         }
-        console.error('创建目录出错:', e.message)
+        console.error('Error creating Folder:', e.message)
       }
     }))
     // folders = folders.filter(v => !mapping[v.id])
@@ -713,7 +713,7 @@ function find_dupe (arr) {
   })
   for (const file of files) {
     const { md5Checksum, parent, name } = file
-    // 根据文件位置和md5值来判断是否重复
+    // Determine whether to repeat based on file location and md5 value
     const key = parent + '|' + md5Checksum // + '|' + name
     if (exists[key]) {
       dupe_files.push(file)
@@ -728,17 +728,17 @@ async function confirm_dedupe ({ file_number, folder_number }) {
   const answer = await prompts({
     type: 'select',
     name: 'value',
-    message: `检测到同位置下重复文件${file_number}个，重复空目录${folder_number}个，是否删除？`,
+    message: `Duplicate files ${file_number}个，Duplicate folders ${folder_number}个，Delete them？`,
     choices: [
-      { title: 'Yes', description: '确认删除', value: 'yes' },
-      { title: 'No', description: '先不删除', value: 'no' }
+      { title: 'Yes', description: 'Confirm Deletion', value: 'yes' },
+      { title: 'No', description: 'Do not delete', value: 'no' }
     ],
     initial: 0
   })
   return answer.value
 }
 
-// 需要sa是源文件夹所在盘的manager
+// Need SA to be the manager of the source TeamDrive
 async function mv_file ({ fid, new_parent, service_account }) {
   const file = await get_info_by_id(fid)
   if (!file) return
@@ -754,14 +754,14 @@ async function mv_file ({ fid, new_parent, service_account }) {
   return axins.patch(url, {}, { headers })
 }
 
-// 将文件或文件夹移入回收站，需要 sa 为 content manager 权限及以上
+// To move files or folders to the recycle bin, SA should be content manager or above
 async function trash_file ({ fid, service_account }) {
   const url = `https://www.googleapis.com/drive/v3/files/${fid}?supportsAllDrives=true`
   const headers = await gen_headers(service_account)
   return axins.patch(url, { trashed: true }, { headers })
 }
 
-// 直接删除文件或文件夹，不会进入回收站，需要 sa 为 manager 权限
+// Delete files or folders directly without entering the recycle bin, requires SA as manager
 async function rm_file ({ fid, service_account }) {
   const headers = await gen_headers(service_account)
   let retry = 0
@@ -772,7 +772,7 @@ async function rm_file ({ fid, service_account }) {
     } catch (err) {
       retry++
       handle_error(err)
-      console.log('删除重试中，重试次数', retry)
+      console.log('retrying to Delete，number of retries', retry)
     }
   }
 }
@@ -782,7 +782,7 @@ async function dedupe ({ fid, update, service_account }) {
   if (!update) {
     const info = get_all_by_fid(fid)
     if (info) {
-      console.log('找到本地缓存数据，缓存时间：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
+      console.log('Find local cache data, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
       arr = info
     }
   }
@@ -792,7 +792,7 @@ async function dedupe ({ fid, update, service_account }) {
   const file_number = dupes.length - folder_number
   const choice = await confirm_dedupe({ file_number, folder_number })
   if (choice === 'no') {
-    return console.log('退出程序')
+    return console.log('  Exitting')
   } else if (!choice) {
     return // ctrl+c
   }
@@ -803,10 +803,10 @@ async function dedupe ({ fid, update, service_account }) {
     try {
       await limit(() => trash_file({ fid: v.id, service_account }))
       if (v.mimeType === FOLDER_TYPE) {
-        console.log('成功删除文件夹', v.name)
+        console.log('Folder successfully deleted', v.name)
         folder_count++
       } else {
-        console.log('成功删除文件', v.name)
+        console.log('File successfully deleted', v.name)
         file_count++
       }
     } catch (e) {
