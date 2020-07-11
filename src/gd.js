@@ -639,7 +639,7 @@ async function copy_file (id, parent, use_sa, limit, task_id) {
     if (task_id) db.prepare('update task set status=? where id=?').run('error', task_id)
     throw new Error('All SA are exhausted')
   } else {
-    console.warn('File creation failed，文件id: ' + id)
+    console.warn('File creation failed，Fileid: ' + id)
   }
 }
 
@@ -657,7 +657,7 @@ async function create_folders ({ source, old_mapping, folders, root, task_id, se
 
   const loop = setInterval(() => {
     const now = dayjs().format('HH:mm:ss')
-    const message = `${now} | 已创建目录 ${count} | 网络请求 进行中${limit.activeCount}/排队中${limit.pendingCount}`
+    const message = `${now} | Folder Created ${count} | Ongoing ${limit.activeCount} /Pending ${limit.pendingCount}`
     print_progress(message)
   }, 1000)
 
@@ -713,7 +713,7 @@ function find_dupe (arr) {
   })
   for (const file of files) {
     const { md5Checksum, parent, name } = file
-    // 根据文件位置和md5值来判断是否重复
+    // Determine whether to repeat based on file location and md5 value
     const key = parent + '|' + md5Checksum // + '|' + name
     if (exists[key]) {
       dupe_files.push(file)
@@ -738,7 +738,7 @@ async function confirm_dedupe ({ file_number, folder_number }) {
   return answer.value
 }
 
-// 需要sa是源文件夹所在盘的manager
+// Need sa to be the manager of the Teamdrive where the source folder is located
 async function mv_file ({ fid, new_parent, service_account }) {
   const file = await get_info_by_id(fid)
   if (!file) return
@@ -754,14 +754,14 @@ async function mv_file ({ fid, new_parent, service_account }) {
   return axins.patch(url, {}, { headers })
 }
 
-// 将文件或文件夹移入回收站，需要 sa 为 content manager 权限及以上
+// To move files or folders to the recycle bin, SA should be content manager or above
 async function trash_file ({ fid, service_account }) {
   const url = `https://www.googleapis.com/drive/v3/files/${fid}?supportsAllDrives=true`
   const headers = await gen_headers(service_account)
   return axins.patch(url, { trashed: true }, { headers })
 }
 
-// 直接删除文件或文件夹，不会进入回收站，需要 sa 为 manager 权限
+// Delete files or folders directly without entering the recycle bin, requires SA as manager
 async function rm_file ({ fid, service_account }) {
   const headers = await gen_headers(service_account)
   let retry = 0
