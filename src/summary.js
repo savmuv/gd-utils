@@ -5,10 +5,10 @@ const { escape } = require('html-escaper')
 module.exports = { make_table, summary, make_html, make_tg_table }
 
 function make_html ({ file_count, folder_count, total_size, details }) {
-  const head = ['Type', 'Size', '大小']
+  const head = ['Type', 'Size', 'Size']
   const th = '<tr>' + head.map(k => `<th>${k}</th>`).join('') + '</tr>'
   const td = details.map(v => '<tr>' + [escape(v.ext), v.count, v.size].map(k => `<td>${k}</td>`).join('') + '</tr>').join('')
-  let tail = ['合计', file_count + folder_count, total_size]
+  let tail = ['Total', file_count + folder_count, total_size]
   tail = '<tr style="font-weight:bold">' + tail.map(k => `<td>${k}</td>`).join('') + '</tr>'
   const table = `<table border="1" cellpadding="12" style="border-collapse:collapse;font-family:serif;font-size:22px;margin:10px auto;text-align: center">
     ${th}
@@ -64,7 +64,7 @@ function make_tg_table ({ file_count, folder_count, total_size, details }) {
   const tails = ['Total', total_count, total_size].map(v => ({ content: v, hAlign }))
   tb.push(headers, ...records)
   tb.push(tails)
-  return tb.toString().replace(/─/g, '—') // 防止在手机端表格换行 去掉replace后在pc端更美观
+  return tb.toString().replace(/─/g, '—') // Prevent line breaks on mobile phones After removing the replacement, it is more beautiful in pc
 }
 
 function summary (info, sort_by) {
@@ -80,7 +80,7 @@ function summary (info, sort_by) {
     let { name, size } = v
     size = Number(size) || 0
     const ext = name.split('.').pop().toLowerCase()
-    if (!name.includes('.') || ext.length > 10) { // 若 . 后超过10字符，判断为无扩展名
+    if (!name.includes('.') || ext.length > 10) { // If it exceeds 10 characters it is judged as no extension
       no_ext_size += size
       return no_ext++
     }
