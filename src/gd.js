@@ -12,7 +12,7 @@ const { db } = require('../db')
 const { make_table, make_tg_table, make_html, summary } = require('./summary')
 const { gen_tree_html } = require('./tree')
 
-const FILE_EXCEED_MSG = '您的团队盘文件数已超限(40万)，停止复制。请将未复制完成的文件夹(或者它的任意子文件夹)移到另一个(sa也有权限的)团队盘中，再执行一遍复制指令即可接上进度继续复制(是的你没看错...)'
+const FILE_EXCEED_MSG = 'The number of files on your team disk has exceeded the limit (400,000)，Stop copying。.Please move the folder that has not been copied (or any of its subfolders) to another (sa also has permissions) team drive, and then execute the copy command again to follow the progress and continue to copy)'
 const FOLDER_TYPE = 'application/vnd.google-apps.folder'
 const sleep = ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
 
@@ -21,7 +21,7 @@ const proxy_url = https_proxy || http_proxy || all_proxy
 
 let axins
 if (proxy_url) {
-  console.log('使用代理：', proxy_url)
+  console.log('Use Proxy：', proxy_url)
   let ProxyAgent
   try {
     ProxyAgent = require('proxy-agent')
@@ -75,7 +75,7 @@ handle_exit(() => {
 
 async function gen_count_body ({ fid, type, update, service_account }) {
   async function update_info () {
-    const info = await walk_and_save({ fid, update, service_account }) // 这一步已经将fid记录存入数据库中了
+    const info = await walk_and_save({ fid, update, service_account }) // This step has already stored the fid record in the database
     const row = db.prepare('SELECT summary from gd WHERE fid=?').get(fid)
     if (!row) return []
     return [info, JSON.parse(row.summary)]
@@ -103,7 +103,7 @@ async function gen_count_body ({ fid, type, update, service_account }) {
   }
   if (type === 'all') {
     info = info || get_all_by_fid(fid)
-    if (!info) { // 说明上次统计过程中断了
+    if (!info) { // It means the last statistical process was interrupted
       [info] = await update_info()
     }
     return info && JSON.stringify(info)
@@ -126,7 +126,7 @@ async function count ({ fid, update, sort, type, output, not_teamdrive, service_
   if (!update) {
     const info = get_all_by_fid(fid)
     if (info) {
-      console.log('找到本地缓存数据，缓存时间：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
+      console.log('Find local cache data, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
       const out_str = get_out_str({ info, type, sort })
       if (output) return fs.writeFileSync(output, out_str)
       return console.log(out_str)
@@ -174,7 +174,7 @@ function get_all_by_fid (fid) {
     if (!subf.length) return result
     const arr = subf.map(v => {
       const row = db.prepare('SELECT * FROM gd WHERE fid = ?').get(v)
-      if (!row) return null // 如果没找到对应的fid记录，说明上次中断了进程或目录读取未完成
+      if (!row) return null // If the corresponding fid record is not found, it means that the process was interrupted last time or the directory reading was not completed
       let info = JSON.parse(row.info)
       info = info.map(vv => {
         vv.parent = v
@@ -196,7 +196,7 @@ async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
 
   const loop = setInterval(() => {
     const now = dayjs().format('HH:mm:ss')
-    const message = `${now} | 已获取对象 ${result.length} | 网络请求 进行中${limit.activeCount}/排队中${limit.pendingCount}`
+    const message = `${now} | Copied ${result.length} | Ongoing ${limit.activeCount} /Pending ${limit.pendingCount}`
     print_progress(message)
   }, 1000)
 
@@ -227,8 +227,8 @@ async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
   } catch (e) {
     console.error(e)
   }
-  console.log('\n信息获取完毕')
-  not_finished.length ? console.log('未读取完毕的目录ID：', JSON.stringify(not_finished)) : console.log('所有目录读取完毕')
+  console.log('\nProcess Complete')
+  not_finished.length ? console.log('Unread FolderID：', JSON.stringify(not_finished)) : console.log('All Folders are read')
   clearInterval(loop)
   const smy = summary(result)
   db.prepare('UPDATE gd SET summary=?, mtime=? WHERE fid=?').run(JSON.stringify(smy), Date.now(), fid)
@@ -236,7 +236,7 @@ async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
 }
 
 function save_files_to_db (fid, files) {
-  // 不保存请求未完成的目录，那么下次调用get_all_by_id会返回null，从而再次调用walk_and_save试图完成此目录的请求
+  // Do not save the directory where the request is not completed, then the next call to get_all_by_id will return null, so call walk_and_save again to try to complete the request for this directory
   if (files.not_finished) return
   let subf = files.filter(v => v.mimeType === FOLDER_TYPE).map(v => v.id)
   subf = subf.length ? JSON.stringify(subf) : null
@@ -259,7 +259,7 @@ async function ls_folder ({ fid, not_teamdrive, service_account }) {
   params.orderBy = 'folder,name desc'
   params.fields = 'nextPageToken, files(id, name, mimeType, size, md5Checksum)'
   params.pageSize = Math.min(PAGE_SIZE, 1000)
-  // const use_sa = (fid !== 'root') && (service_account || !not_teamdrive) // 不带参数默认使用sa
+  // const use_sa = (fid !== 'root') && (service_account || !not_teamdrive) // Without parameters, use sa by default
   const use_sa = (fid !== 'root') && service_account
   const headers = await gen_headers(use_sa)
   do {
@@ -279,7 +279,7 @@ async function ls_folder ({ fid, not_teamdrive, service_account }) {
       }
     }
     if (!data) {
-      console.error('读取目录未完成(部分读取), 参数:', params)
+      console.error('Reading directory is not complete (partial reading), Parameters:', params)
       files.not_finished = true
       return files
     }
@@ -327,21 +327,21 @@ async function get_sa_token () {
     try {
       return await real_get_sa_token(tk)
     } catch (e) {
-      console.warn('SA获取access_token失败：', e.message)
+      console.warn('SA failed to get access_token：', e.message)
       SA_TOKENS = SA_TOKENS.filter(v => v.gtoken !== tk.gtoken)
       if (!SA_TOKENS.length) SA_TOKENS = get_sa_batch()
     }
   }
-  throw new Error('没有可用的SA帐号')
+  throw new Error('No SA account available')
 }
 
 async function real_get_sa_token (el) {
   const { value, expires, gtoken } = el
-  // 把gtoken传递出去的原因是当某账号流量用尽时可以依此过滤
+  // The reason for passing out gtoken is that when an account is exhausted, it can be filtered accordingly
   if (Date.now() < expires) return { access_token: value, gtoken }
   const { access_token, expires_in } = await gtoken.getToken({ forceRefresh: true })
   el.value = access_token
-  el.expires = Date.now() + 1000 * (expires_in - 60 * 5) // 提前5分钟判定为过期
+  el.expires = Date.now() + 1000 * (expires_in - 60 * 5) // 5 mins passed is taken as Expired
   return { access_token, gtoken }
 }
 
@@ -387,7 +387,7 @@ async function create_folder (name, parent, use_sa, limit) {
       console.log('Retry Creating Folders：', name, 'Number of Retries：', retry)
     }
   }
-  throw new Error(err_message + ' 目录名：' + name)
+  throw new Error(err_message + 'Folder Name：' + name)
 }
 
 async function get_name_by_id (fid) {
@@ -444,7 +444,7 @@ async function copy ({ source, target, name, min_size, update, not_teamdrive, se
   }
 }
 
-// 待解决：如果用户手动ctrl+c中断进程，那么已经发出的请求，就算完成了也不会记录到本地数据库中，所以可能产生重复文件（夹）
+// To be resolved: If the user manually interrupts the process with ctrl+c, the request that has been issued will not be recorded in the local database even if it is completed, so duplicate files (folders) may be generated
 async function real_copy ({ source, target, name, min_size, update, dncnr, not_teamdrive, service_account, is_server }) {
   async function get_new_root () {
     if (dncnr) return { id: target }
@@ -585,7 +585,7 @@ async function copy_files ({ files, mapping, service_account, root, task_id }) {
   // const loop = setInterval(() => {
   //   const now = dayjs().format('HH:mm:ss')
   //   const {activeCount, pendingCount} = limit
-  //   const message = `${now} | 已复制文件数 ${count} | 网络请求 进行中${activeCount}/排队中${pendingCount}`
+  //   const message = `${now} | Number of files copied ${count} | Ongoing ${activeCount} / Pending ${pendingCount}`
   //   print_progress(message)
   // }, 1000)
   // return Promise.all(files.map(async file => {
@@ -726,14 +726,10 @@ function find_dupe (arr) {
 
 async function confirm_dedupe ({ file_number, folder_number }) {
   const answer = await prompts({
-    type: 'select',
+    type: 'text',
     name: 'value',
-    message: `Duplicate file detected ${file_number}，Duplicate empty Folders ${folder_number}，Delete them？`,
-    choices: [
-      { title: 'Yes', description: 'Confirm', value: 'yes' },
-      { title: 'No', description: 'No', value: 'no' }
-    ],
-    initial: 0
+    message: `Duplicate file detected ${file_number}，Duplicate empty Folders ${folder_number}，Delete them (yes/no？`,
+    validate: value => ['yes', 'no'].includes(value) ? true : 'must enter yes or no'
   })
   return answer.value
 }
