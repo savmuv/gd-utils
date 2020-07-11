@@ -64,7 +64,7 @@ function make_tg_table ({ file_count, folder_count, total_size, details }) {
   const tails = ['Total', total_count, total_size].map(v => ({ content: v, hAlign }))
   tb.push(headers, ...records)
   tb.push(tails)
-  return tb.toString().replace(/─/g, '—') // Prevent line breaks on mobile phones After removing the replacement, it is more beautiful in pc
+  return tb.toString().replace(/─/g, '—') // 防止在手机端表格换行 去掉replace后在pc端更美观
 }
 
 function summary (info, sort_by) {
