@@ -10,6 +10,7 @@ const handle_exit = require('signal-exit')
 const { AUTH, RETRY_LIMIT, PARALLEL_LIMIT, TIMEOUT_BASE, TIMEOUT_MAX, LOG_DELAY, PAGE_SIZE, DEFAULT_TARGET } = require('../config')
 const { db } = require('../db')
 const { make_table, make_tg_table, make_html, summary } = require('./summary')
+const { gen_tree_html } = require('./tree')
 
 const FILE_EXCEED_MSG = 'The number of files on your team disk has exceeded the limit(400K)，Stop copying，Please move the unfinished folder to another team drive，Execute the copy command again to continue copying'
 const FOLDER_TYPE = 'application/vnd.google-apps.folder'
@@ -143,7 +144,9 @@ async function count ({ fid, update, sort, type, output, not_teamdrive, service_
 function get_out_str ({ info, type, sort }) {
   const smy = summary(info, sort)
   let out_str
-  if (type === 'html') {
+   if (type === 'tree') {
+    out_str = gen_tree_html(info)
+  } else if (type === 'html') {
     out_str = make_html(smy)
   } else if (type === 'json') {
     out_str = JSON.stringify(smy)
