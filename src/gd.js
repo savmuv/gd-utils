@@ -21,7 +21,7 @@ const proxy_url = https_proxy || http_proxy || all_proxy
 
 let axins
 if (proxy_url) {
-  console.log('Use proxy：', proxy_url)
+  console.log('使用代理：', proxy_url)
   let ProxyAgent
   try {
     ProxyAgent = require('proxy-agent')
@@ -75,7 +75,7 @@ handle_exit(() => {
 
 async function gen_count_body ({ fid, type, update, service_account }) {
   async function update_info () {
-    const info = await walk_and_save({ fid, update, service_account }) // This step has already stored the fid record in the database
+    const info = await walk_and_save({ fid, update, service_account }) // 这一步已经将fid记录存入数据库中了
     const row = db.prepare('SELECT summary from gd WHERE fid=?').get(fid)
     if (!row) return []
     return [info, JSON.parse(row.summary)]
@@ -103,7 +103,7 @@ async function gen_count_body ({ fid, type, update, service_account }) {
   }
   if (type === 'all') {
     info = info || get_all_by_fid(fid)
-    if (!info) { // last statistical process was interrupted
+    if (!info) { // 说明上次统计过程中断了
       [info] = await update_info()
     }
     return info && JSON.stringify(info)
@@ -144,7 +144,7 @@ async function count ({ fid, update, sort, type, output, not_teamdrive, service_
 function get_out_str ({ info, type, sort }) {
   const smy = summary(info, sort)
   let out_str
-   if (type === 'tree') {
+  if (type === 'tree') {
     out_str = gen_tree_html(info)
   } else if (type === 'html') {
     out_str = make_html(smy)
@@ -174,7 +174,7 @@ function get_all_by_fid (fid) {
     if (!subf.length) return result
     const arr = subf.map(v => {
       const row = db.prepare('SELECT * FROM gd WHERE fid = ?').get(v)
-      if (!row) return null // If no corresponding fid record is found，The last time the process was interrupted or the directory read was not completed
+      if (!row) return null // 如果没找到对应的fid记录，说明上次中断了进程或目录读取未完成
       let info = JSON.parse(row.info)
       info = info.map(vv => {
         vv.parent = v
@@ -227,7 +227,7 @@ async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
   } catch (e) {
     console.error(e)
   }
-  console.log('\nInformation_is_complete')
+  console.log('\nStats completed')
   not_finished.length ? console.log('Unread FolderID：', JSON.stringify(not_finished)) : console.log('All Folders are Read')
   clearInterval(loop)
   const smy = summary(result)
@@ -259,7 +259,7 @@ async function ls_folder ({ fid, not_teamdrive, service_account }) {
   params.orderBy = 'folder,name desc'
   params.fields = 'nextPageToken, files(id, name, mimeType, size, md5Checksum)'
   params.pageSize = Math.min(PAGE_SIZE, 1000)
-  // const use_sa = (fid !== 'root') && (service_account || !not_teamdrive) // Without parameters, use sa by default
+  // const use_sa = (fid !== 'root') && (service_account || !not_teamdrive) // 不带参数默认使用sa
   const use_sa = (fid !== 'root') && service_account
   const headers = await gen_headers(use_sa)
   do {
@@ -279,7 +279,7 @@ async function ls_folder ({ fid, not_teamdrive, service_account }) {
       }
     }
     if (!data) {
-      console.error('Reading Folder is not complete (partial reading), Parameter:', params)
+      console.error('Folder not read Completely, Paramaters:', params)
       files.not_finished = true
       return files
     }
@@ -327,7 +327,7 @@ async function get_sa_token () {
     try {
       return await real_get_sa_token(tk)
     } catch (e) {
-      console.warn('SA failed to get access_token：', e.message)
+      console.warn('A failed to get the access_token：', e.message)
       SA_TOKENS = SA_TOKENS.filter(v => v.gtoken !== tk.gtoken)
       if (!SA_TOKENS.length) SA_TOKENS = get_sa_batch()
     }
@@ -341,7 +341,7 @@ async function real_get_sa_token (el) {
   if (Date.now() < expires) return { access_token: value, gtoken }
   const { access_token, expires_in } = await gtoken.getToken({ forceRefresh: true })
   el.value = access_token
-  el.expires = Date.now() + 1000 * (expires_in - 60 * 5) // 5 minutes ahead of time is judged to be expired
+  el.expires = Date.now() + 1000 * (expires_in - 60 * 5) // 5 minutes is taken as expired
   return { access_token, gtoken }
 }
 
@@ -384,10 +384,10 @@ async function create_folder (name, parent, use_sa, limit) {
         if (limit) limit.clearQueue()
         throw new Error(FILE_EXCEED_MSG)
       }
-      console.log('Create Folder retrying：', name, 'number of retries：', retry)
+      console.log('Retrying to Create the Folder：', name, 'number of retries：', retry)
     }
   }
-  throw new Error(err_message + ' Directory name：' + name)
+  throw new Error(err_message + ' Folder name：' + name)
 }
 
 async function get_name_by_id (fid) {
@@ -405,7 +405,7 @@ async function get_info_by_id (fid, use_sa) {
     includeItemsFromAllDrives: true,
     supportsAllDrives: true,
     corpora: 'allDrives',
-    fields: 'id,name, parents'
+    fields: 'id, name, parents, mimeType'
   }
   url += '?' + params_to_query(params)
   const headers = await gen_headers(use_sa)
@@ -417,7 +417,7 @@ async function user_choose () {
   const answer = await prompts({
     type: 'select',
     name: 'value',
-    message: 'The last copy's record is detected，Do you want to continue？',
+    message: 'Do you want to resume from where it was stopped？',
     choices: [
       { title: 'Continue', description: 'Continue from where it was last interrupted', value: 'continue' },
       { title: 'Restart', description: 'Ignore all Files，Restart', value: 'restart' },
@@ -544,7 +544,7 @@ async function copy_files ({ files, mapping, service_account, root, task_id }) {
 
   const loop = setInterval(() => {
     const now = dayjs().format('HH:mm:ss')
-    const message = `${now} | Number_of files copied ${count} | Number of files Pending ${files.length}`
+    const message = `${now} | Number of files Copied ${count} | Number_of files Pending ${files.length}`
     print_progress(message)
   }, 1000)
 
@@ -585,7 +585,7 @@ async function copy_files ({ files, mapping, service_account, root, task_id }) {
   // const loop = setInterval(() => {
   //   const now = dayjs().format('HH:mm:ss')
   //   const {activeCount, pendingCount} = limit
-  //   const message = `${now} | Number of files copied ${count} | Ongoing${activeCount}/Pending${pendingCount}`
+  //   const message = `${now} | Number of files copied ${count} | Ongoing Copy ${activeCount}/Number of files Pending ${pendingCount}`
   //   print_progress(message)
   // }, 1000)
   // return Promise.all(files.map(async file => {
@@ -625,7 +625,7 @@ async function copy_file (id, parent, use_sa, limit, task_id) {
       if (message && message.toLowerCase().includes('file limit')) {
         if (limit) limit.clearQueue()
         if (task_id) db.prepare('update task set status=? where id=?').run('error', task_id)
-        throw new Error('The number of files on your team disk has exceeded the limit，Stop copying')
+        throw new Error('The number of files on your team drive has exceeded the 400K limit，Stop copying')
       }
       if (use_sa && message && message.toLowerCase().includes('rate limit')) {
         SA_TOKENS = SA_TOKENS.filter(v => v.gtoken !== gtoken)
@@ -639,7 +639,7 @@ async function copy_file (id, parent, use_sa, limit, task_id) {
     if (task_id) db.prepare('update task set status=? where id=?').run('error', task_id)
     throw new Error('All SAs are used up')
   } else {
-    console.warn('File copy failed，Fileid: ' + id)
+    console.warn('Copy failed，FileID: ' + id)
   }
 }
 
@@ -657,7 +657,7 @@ async function create_folders ({ source, old_mapping, folders, root, task_id, se
 
   const loop = setInterval(() => {
     const now = dayjs().format('HH:mm:ss')
-    const message = `${now} | Folder Created ${count} | Ongoing${limit.activeCount}/Pending${limit.pendingCount}`
+    const message = `${now} | Folder Created ${count} | Ongoing Transfers ${limit.activeCount}/Pending Transfers ${limit.pendingCount}`
     print_progress(message)
   }, 1000)
 
@@ -736,7 +736,7 @@ async function confirm_dedupe ({ file_number, folder_number }) {
   const answer = await prompts({
     type: 'select',
     name: 'value',
-    message: `Duplicate files ${file_number}，Duplicate Folders ${folder_number}，Delete them？`,
+    message: `Duplicate files ${file_number}个，Duplicate files ${folder_number}个，Delete them？`,
     choices: [
       { title: 'Yes', description: 'confirm deletion', value: 'yes' },
       { title: 'No', description: 'Do not Delete', value: 'no' }
@@ -780,7 +780,7 @@ async function rm_file ({ fid, service_account }) {
     } catch (err) {
       retry++
       handle_error(err)
-      console.log('Delete retrying，number of retries', retry)
+      console.log('Retrying to delete，number of retries', retry)
     }
   }
 }
@@ -818,7 +818,8 @@ async function dedupe ({ fid, update, service_account }) {
         file_count++
       }
     } catch (e) {
-      console.log('failed to delete', e.message)
+      console.log('failed to delete', v)
+      handle_error(e)
     }
   }))
   return { file_count, folder_count }
@@ -842,5 +843,4 @@ function print_progress (msg) {
   }
 }
 
-module.exports = { ls_folder, count, validate_fid, copy, dedupe, copy_file, gen_count_body, real_copy, get_name_by_id }
-
+module.exports = { ls_folder, count, validate_fid, copy, dedupe, copy_file, gen_count_body, real_copy, get_name_by_id, get_info_by_id }
