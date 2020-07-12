@@ -8,7 +8,7 @@
     https://github.com/vitaminx/gd-utils
 🌟 All I did is edit the code and used google translate to change chinese to English..so all Credits to the OPs
 
-🌟In Readme I included only the Installation and running in your system (TG Bot part is not included)
+🌟 I included only the Installation part for running in your system (TG Bot part is excluded)
 ## General Instructions
 Like Other Tools (Autorclone/Folderclone/Gclone/Fclone)  Gd-Utils is also based upon Service accounts aka SAs
 
@@ -65,12 +65,12 @@ node --max-old-space-size=8192 copy SourceFolderID DestinationFolderID -S
 ```
 🔷 Size Command
 ```bash
-node count FolderID -S
-node count FolderID -S -t tree -o tree.html (Will create tree.html inside gd-utils folder with tree like arrangament of files with size)
+node count FolderID -S -u
+node count FolderID -S -u -t tree -o tree.html (Will create tree.html inside gd-utils folder with tree like arrangament of files with size)
 ```
 🔷 Dedupe Command
 ```bash
-node dedupe FolderID -S
+node dedupe FolderID -S -u
 ```
 🔷 Help Commands
 ```bash
