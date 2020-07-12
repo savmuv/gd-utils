@@ -6,8 +6,12 @@ const pLimit = require('p-limit')
 const axios = require('@viegg/axios')
 const { GoogleToken } = require('gtoken')
 const handle_exit = require('signal-exit')
+const { argv } = require('yargs')
 
-const { AUTH, RETRY_LIMIT, PARALLEL_LIMIT, TIMEOUT_BASE, TIMEOUT_MAX, LOG_DELAY, PAGE_SIZE, DEFAULT_TARGET } = require('../config')
+let { PARALLEL_LIMIT } = require('../config')
+PARALLEL_LIMIT = argv.l || argv.limit || PARALLEL_LIMIT
+
+const { AUTH, RETRY_LIMIT, TIMEOUT_BASE, TIMEOUT_MAX, LOG_DELAY, PAGE_SIZE, DEFAULT_TARGET } = require('../config')
 const { db } = require('../db')
 const { make_table, make_tg_table, make_html, summary } = require('./summary')
 const { gen_tree_html } = require('./tree')
@@ -390,9 +394,9 @@ async function create_folder (name, parent, use_sa, limit) {
   throw new Error(err_message + 'Folder Name：' + name)
 }
 
-async function get_name_by_id (fid) {
+async function get_name_by_id (fid, use_sa) {
   try {
-    const { name } = await get_info_by_id(fid, true)
+    const { name } = await get_info_by_id(fid, use_sa)
     return name
   } catch (e) {
     return fid
@@ -573,7 +577,7 @@ async function copy_files ({ files, mapping, service_account, root, task_id }) {
     }).finally(() => {
       concurrency--
     })
-  } while (concurrency)
+  } while (concurrency || files.length)
   clearInterval(loop)
   // const limit = pLimit(PARALLEL_LIMIT)
   // let count = 0
