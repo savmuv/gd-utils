@@ -419,10 +419,15 @@ async function get_info_by_id (fid, use_sa) {
 
 async function user_choose () {
   const answer = await prompts({
-    type: 'text',
+    type: 'select',
     name: 'value',
-    message: 'Do you want to resume your transfer？(resume/restart/exit)',
-    validate: value => ['resume', 'restart', 'exit'].includes(value) ? true : 'must enter resume or restart or exit'
+    message: 'What do you wish to do？',
+    choices: [
+      { title: 'Continue', description: 'Resume', value: 'continue' },
+      { title: 'Restart', description: 'Restart', value: 'restart' },
+      { title: 'Exit', description: 'Exit', value: 'exit' }
+    ],
+    initial: 0
   })
   return answer.value
 }
@@ -727,7 +732,7 @@ async function confirm_dedupe ({ file_number, folder_number }) {
   const answer = await prompts({
     type: 'text',
     name: 'value',
-    message: `Duplicate file detected ${file_number}，Duplicate empty Folders ${folder_number}，Delete them (yes/no？`,
+    message: `Duplicate file detected ${file_number}，Duplicate empty Folders ${folder_number}，Delete them (yes/no) ？`,
     validate: value => ['yes', 'no'].includes(value) ? true : 'must enter yes or no'
   })
   return answer.value
