@@ -18,7 +18,7 @@ const FID_TO_NAME = {}
 async function get_folder_name (fid) {
   let name = FID_TO_NAME[fid]
   if (name) return name
-  name = await get_name_by_id(fid)
+  name = await get_name_by_id(fid, !USE_PERSONAL_AUTH)
   return FID_TO_NAME[fid] = name
 }
 
@@ -235,7 +235,7 @@ async function tg_copy ({ fid, target, chat_id, update }) { // return task_id
     sm({ chat_id, text: '请输入目的地ID或先在config.js里设置默认复制目的地ID(DEFAULT_TARGET)' })
     return
   }
-  const file = await get_info_by_id(fid, true)
+  const file = await get_info_by_id(fid, !USE_PERSONAL_AUTH)
   if (file && file.mimeType !== 'application/vnd.google-apps.folder') {
     return copy_file(fid, target, true).then(data => {
       sm({ chat_id, parse_mode: 'HTML', text: `复制单文件成功，文件位置：${gen_link(target)}` })
@@ -343,11 +343,12 @@ function extract_fid (text) {
   try {
     if (!text.startsWith('http')) text = 'https://' + text
     const u = new URL(text)
-    // if (u.pathname.includes('/folders/')) {
-    if (u.pathname.includes('/folders/') || u.pathname.includes('/file/')) {
-      const reg = /[^/?]+$/
-      const match = u.pathname.match(reg)
-      return match && match[0]
+    if (u.pathname.includes('/folders/')) {
+      return u.pathname.split('/').map(v => v.trim()).filter(v => v).pop()
+    } else if (u.pathname.includes('/file/')) {
+    const file_reg = /file\/d\/([a-zA-Z0-9_-]+)/
+    const file_match = u.pathname.match(file_reg)
+    return file_match && file_match[1]
     }
     return u.searchParams.get('id')
   } catch (e) {
