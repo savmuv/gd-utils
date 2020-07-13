@@ -51,7 +51,7 @@ router.post('/api/gdurl/tgbot', async ctx => {
   if (callback_query) {
     const { id, data } = callback_query
     const chat_id = callback_query.from.id
-    const [action, fid, target] = data.split(' ')
+    const [action, fid, target] = data.split(' ').filter(v => v)
     if (action === 'count') {
       if (counting[fid]) return sm({ chat_id, text: fid + ' 正在统计，请稍等片刻' })
       counting[fid] = true
