@@ -51,7 +51,10 @@ npm install --unsafe-perm=true --allow-root
 
 Just Copy the following Code and Paste in your Terminal
 ```bash
-sudo apt-get install build-essential && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils/ && cd gd-utils && npm install --unsafe-perm=true --allow-root
+sudo apt-get install build-essential && sudo apt-get update && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils/ && cd gd-utils
+```
+```bash
+npm install --unsafe-perm=true --allow-root
 ```
 ⚫ After this is Done
 
@@ -61,15 +64,18 @@ sudo apt-get install build-essential && curl -sL https://deb.nodesource.com/setu
 ## Usage
 🔷 Copy Command
 ```bash
+cd ~/gd-utils
 node --max-old-space-size=8192 copy SourceFolderID DestinationFolderID -S
 ```
 🔷 Size Command
 ```bash
+cd ~/gd-utils
 node count FolderID -S -u
 node count FolderID -S -u -t tree -o tree.html (Will create tree.html inside gd-utils folder with tree like arrangament of files with size)
 ```
 🔷 Dedupe Command
 ```bash
+cd ~/gd-utils
 node dedupe FolderID -S -u
 ```
 🔷 Help Commands
