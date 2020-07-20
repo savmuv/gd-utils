@@ -2,6 +2,8 @@
 
 const { argv } = require('yargs')
   .usage('Usage: ./$0 <folder-id> [options]')
+  .alias('y', 'yes')
+  .describe('yes', 'If duplicates are found，Delete without asking')
   .alias('u', 'update')
   .describe('u', 'Do not use local cache，Obtain source folder information online')
   .alias('S', 'service_account')
@@ -13,8 +15,8 @@ const { dedupe, validate_fid } = require('./src/gd')
 
 const [fid] = argv._
 if (validate_fid(fid)) {
-  const { update, service_account } = argv
-  dedupe({ fid, update, service_account }).then(info => {
+  const { update, service_account, yes } = argv
+  dedupe({ fid, update, service_account, yes }).then(info => {
     if (!info) return
     const { file_count, folder_count } = info
     console.log('Succesfully Deleted，Total deleted files：', file_count, 'Number of Folders：', folder_count)
