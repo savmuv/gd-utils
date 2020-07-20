@@ -568,6 +568,7 @@ async function copy_files ({ files, mapping, service_account, root, task_id }) {
   do {
     if (err) {
       clearInterval(loop)
+      files = null
       throw err
     }
     if (concurrency > PARALLEL_LIMIT) {
@@ -639,7 +640,7 @@ async function copy_file (id, parent, use_sa, limit, task_id) {
       if (message && message.toLowerCase().includes('file limit')) {
         if (limit) limit.clearQueue()
         if (task_id) db.prepare('update task set status=? where id=?').run('error', task_id)
-        throw new Error('Your team drive file limit has been exceeded, stop copying')
+        throw new Error(FILE_EXCEED_MSG)
       }
       if (use_sa && message && message.toLowerCase().includes('rate limit')) {
         SA_TOKENS = SA_TOKENS.filter(v => v.gtoken !== gtoken)
