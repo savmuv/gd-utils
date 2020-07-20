@@ -37,8 +37,9 @@ if (proxy_url) {
   axins = axios.create({})
 }
 
+const SA_LOCATION = argv.sa || 'sa'
 const SA_BATCH_SIZE = 1000
-const SA_FILES = fs.readdirSync(path.join(__dirname, '../sa')).filter(v => v.endsWith('.json'))
+const SA_FILES = fs.readdirSync(path.join(__dirname, '..', SA_LOCATION)).filter(v => v.endsWith('.json'))
 SA_FILES.flag = 0
 let SA_TOKENS = get_sa_batch()
 
@@ -60,7 +61,7 @@ function get_sa_batch () {
   SA_FILES.flag = new_flag
   return files.map(filename => {
     const gtoken = new GoogleToken({
-      keyFile: path.join(__dirname, '../sa', filename),
+      keyFile: path.join(__dirname, '..', SA_LOCATION, filename),
       scope: ['https://www.googleapis.com/auth/drive']
     })
     return { gtoken, expires: 0 }
@@ -196,7 +197,7 @@ function get_all_by_fid (fid) {
 }
 
 async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
-  const result = []
+  let result = []
   const not_finished = []
   const limit = pLimit(PARALLEL_LIMIT)
 
@@ -225,7 +226,7 @@ async function walk_and_save ({ fid, not_teamdrive, update, service_account }) {
     should_save && save_files_to_db(parent, files)
     const folders = files.filter(v => v.mimeType === FOLDER_TYPE)
     files.forEach(v => v.parent = parent)
-    result.push(...files)
+    result = result.concat(files)
     return Promise.all(folders.map(v => recur(v.id)))
   }
   try {
@@ -267,15 +268,21 @@ async function ls_folder ({ fid, not_teamdrive, service_account }) {
   params.pageSize = Math.min(PAGE_SIZE, 1000)
   // const use_sa = (fid !== 'root') && (service_account || !not_teamdrive) // Without parameters, use sa by default
   const use_sa = (fid !== 'root') && service_account
-  const headers = await gen_headers(use_sa)
+  // const headers = await gen_headers(use_sa)
+  // For Folders with a large number of subfolders（1ctMwpIaBg8S1lrZDxdynLXJpMsm5guAl），May not be finished，access_token expired
+  // Because nextPageToken is needed to get the data of the next page，So you cannot use parallel requests，The test found that each request to obtain 1000 files usually takes more than 20 seconds to complete
+  const gtoken = use_sa && (await get_sa_token()).gtoken
   do {
     if (pageToken) params.pageToken = pageToken
     let url = 'https://www.googleapis.com/drive/v3/files'
     url += '?' + params_to_query(params)
-    const payload = { headers, timeout: TIMEOUT_BASE }
     let retry = 0
     let data
+    const payload = { timeout: TIMEOUT_BASE }
     while (!data && (retry < RETRY_LIMIT)) {
+      const access_token = gtoken ? (await gtoken.getToken()).access_token : (await get_access_token())
+      const headers = { authorization: 'Bearer ' + access_token }
+      payload.headers = headers
       try {
         data = (await axins.get(url, payload)).data
       } catch (err) {
@@ -290,6 +297,7 @@ async function ls_folder ({ fid, not_teamdrive, service_account }) {
       return files
     }
     files = files.concat(data.files)
+    argv.sfl && console.log('files.length:', files.length)
     pageToken = data.nextPageToken
   } while (pageToken)
 
@@ -779,7 +787,7 @@ async function rm_file ({ fid, service_account }) {
   }
 }
 
-async function dedupe ({ fid, update, service_account }) {
+async function dedupe ({ fid, update, service_account, yes }) {
   let arr
   if (!update) {
     const info = get_all_by_fid(fid)
@@ -792,7 +800,7 @@ async function dedupe ({ fid, update, service_account }) {
   const dupes = find_dupe(arr)
   const folder_number = dupes.filter(v => v.mimeType === FOLDER_TYPE).length
   const file_number = dupes.length - folder_number
-  const choice = await confirm_dedupe({ file_number, folder_number })
+  const choice = yes || await confirm_dedupe({ file_number, folder_number })
   if (choice === 'no') {
     return console.log('Exit')
   } else if (!choice) {
