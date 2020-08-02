@@ -68,7 +68,7 @@ Example：
 
 function send_task_help (chat_id) {
   const text = `<pre>/task [action/id] [id] | Manage running tasks
-用例：
+Example：
 /task | Return details of all running tasks
 /task 7 | Return task number 7
 /task all | Return to list of all task records
