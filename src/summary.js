@@ -64,7 +64,7 @@ function make_tg_table ({ file_count, folder_count, total_size, details }) {
   const tails = ['Total', total_count, total_size].map(v => ({ content: v, hAlign }))
   tb.push(headers, ...records)
   tb.push(tails)
-  return tb.toString().replace(/─/g, '—') // 防止在手机端表格换行 去掉replace后在pc端更美观
+  return tb.toString().replace(/─/g, '—') // Prevent the table from wrapping on the mobile phone and it will look more beautiful on the pc after removing the replace
 }
 
 function summary (info, sort_by) {
@@ -80,7 +80,7 @@ function summary (info, sort_by) {
     let { name, size } = v
     size = Number(size) || 0
     const ext = name.split('.').pop().toLowerCase()
-    if (!name.includes('.') || ext.length > 10) { // 若 . 后超过10字符，判断为无扩展名
+    if (!name.includes('.') || ext.length > 10) { // If there are more than 10 characters after . it is judged as no extension
       no_ext_size += size
       return no_ext++
     }
