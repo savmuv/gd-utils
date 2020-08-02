@@ -12,13 +12,13 @@ const PARALLEL_LIMIT = 20 // The number of parallel network requests can be adju
 const DEFAULT_TARGET = '' // Required. Copy the default destination ID. If target is not specified, it will be copied here. It is recommended to fill in the TeamDrive ID
 
 const AUTH = { // If you have the json authorization file of the service account, you can copy it to the sa directory instead of client_id/secret/refrest_token
-  client_id: 'your_client_id',
-  client_secret: 'your_client_secret',
-  refresh_token: 'your_refrest_token',
+  client_id: '185811244565-uile36o5dbq4jetp82ldoug2sbar347i.apps.googleusercontent.com',
+  client_secret: '61yYtwNecJ_BLvw6PCCwH0yQ',
+  refresh_token: 'ya29.a0AfH6SMBt1AHulXKoJoTCtDMsNcayyvMtXapP4vGscerxA_qneFj_l_Fm7JBPe1Wq6Qn5x5ardTPZudtCUOhP-_1QSMN-1xSFq9fQHIhjOPCH53r9draZ_pTTe-LC3zTsPxwA8s3KIRhfoNzdKejxkeoEhEEGuqK-KfM',
   expires: 0, // Can be left blank
   access_token: '', // Can be left blank
-  tg_token: 'bot_token', // Telegram bot token，Refer this to obtain it, https://core.telegram.org/bots#6-botfather
-  tg_whitelist: ['your_tg_username'] // Your tg username(t.me/username)，The bot will only execute commands sent by users in this list
+  tg_token: '1161822195:AAGAynUmExTYGE3fs5wOz4hN0BRroR3OPho', // Telegram bot token，Refer this to obtain it, https://core.telegram.org/bots#6-botfather
+  tg_whitelist: ['Roshanconnor'] // Your tg username(t.me/username)，The bot will only execute commands sent by users in this list
 }
 
 module.exports = { AUTH, PARALLEL_LIMIT, RETRY_LIMIT, TIMEOUT_BASE, TIMEOUT_MAX, LOG_DELAY, PAGE_SIZE, DEFAULT_TARGET }
