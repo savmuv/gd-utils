@@ -36,7 +36,7 @@ Just Copy the following Code and Paste in your Terminal
 
 ! Warning - We are Downgrading libc6 because its giving some errors in WSL1 (According to the Post [Here](https://github.com/microsoft/WSL/issues/5125))
 ```bash
-sudo apt-get install build-essential && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils/ && sudo add-apt-repository ppa:rafaeldtinoco/lp1871129 && sudo apt update && sudo apt install libc6=2.31-0ubuntu8+lp1871129~1 libc6-dev=2.31-0ubuntu8+lp1871129~1 libc-dev-bin=2.31-0ubuntu8+lp1871129~1 -y --allow-downgrades && sudo apt-mark hold libc6 && cd gd-utils
+sudo apt-get install build-essential && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/Gdutils/ && sudo add-apt-repository ppa:rafaeldtinoco/lp1871129 && sudo apt update && sudo apt install libc6=2.31-0ubuntu8+lp1871129~1 libc6-dev=2.31-0ubuntu8+lp1871129~1 libc-dev-bin=2.31-0ubuntu8+lp1871129~1 -y --allow-downgrades && sudo apt-mark hold libc6 && cd gd-utils
 ```
 ```bash
 npm install --unsafe-perm=true --allow-root
@@ -51,7 +51,7 @@ npm install --unsafe-perm=true --allow-root
 
 Just Copy the following Code and Paste in your Terminal
 ```bash
-sudo apt-get install build-essential && sudo apt-get update && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils/ && cd gd-utils
+sudo apt-get install build-essential && sudo apt-get update && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/Gdutils/ && cd gd-utils
 ```
 ```bash
 npm install --unsafe-perm=true --allow-root
