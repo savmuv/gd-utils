@@ -8,7 +8,7 @@
     https://github.com/vitaminx/gd-utils
 🌟 All I did is edit the code and used google translate to change chinese to English..so all Credits to the OPs
 
-🌟 I included only the Installation part for running in your system (TG Bot part is excluded)
+🌟 I included only the Installation part for running in your system (Telegram Bot part is excluded)
 ## General Instructions
 Like Other Tools (Autorclone/Folderclone/Gclone/Fclone)  Gd-Utils is also based upon Service accounts aka SAs
 
