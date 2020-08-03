@@ -65,7 +65,7 @@ npm install --unsafe-perm=true --allow-root
 🔷 Copy Command
 ```bash
 cd ~/gd-utils
-node --max-old-space-size=8192 copy SourceFolderID DestinationFolderID -S
+node --max-old-space-size=1024 copy SourceFolderID DestinationFolderID -S
 ```
 🔷 Size Command
 ```bash
