@@ -31,7 +31,7 @@ if (proxy_url) {
   let ProxyAgent
   try {
     ProxyAgent = require('proxy-agent')
-  } catch (e) { // 没执行 npm i proxy-agent
+  } catch (e) { // run npm i proxy-agent
     ProxyAgent = require('https-proxy-agent')
   }
   axins = axios.create({ httpsAgent: new ProxyAgent(proxy_url) })
