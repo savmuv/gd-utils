@@ -2,13 +2,13 @@
 
  Gd-Utils is just another Tool which helps us to Bypass the 750GB daily limit by google
 
-🌟 This Fork is an English version of the Gd-Utils by 
+:octocat: This Fork is an English version of the Gd-Utils by 
 
     https://github.com/iwestlin/gd-utils
 
-🌟 All I did is edit the code and used google translate to change chinese to English..so all Credits to the OP
+:octocat: All I did is edit the code and used google translate to change chinese to English..so all Credits to the OP
 
-🌟 I included only the Installation part for running in your system ([Telegram Bot part is here](https://github.com/roshanconnor123/Gdutils_Tgbot))
+:octocat: I included only the Installation part for running in your system ([Telegram Bot part is here](https://github.com/roshanconnor123/Gdutils_Tgbot))
 ## General Instructions
 Like Other Tools (Autorclone/Folderclone/Gclone/Fclone)  Gd-Utils is also based upon Service accounts aka SAs
 
@@ -18,11 +18,11 @@ Like Other Tools (Autorclone/Folderclone/Gclone/Fclone)  Gd-Utils is also based 
 
 ### 📦 Pre Requisites:
 
- This tool can be used in **Windows** , **Android** as well as **Linux OS**
+📣 This tool can be used in **Windows** , **Android** as well as **Linux OS**
 
- You need Generated **SAs** (Like I mentioned above)
+📣 You need Generated **SAs** (Like I mentioned above)
 
- If you are using this in **Linux** or **Android**
+📣 If you are using this in **Linux** or **Android** :-
 
 Create a new Repo in Github and name it as `accounts` and Upload all your SAs (json files) there
 
