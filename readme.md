@@ -35,12 +35,17 @@ Create a new Repo in Github and name it as `accounts` and Upload all your SAs (j
 
 🌠 Install Nodejs in windows
 
-Go to [Nodejs](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and download the `msi` file and install it
+Go to [Nodejs](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and download the `msi` file and install it (Tick mark the Option saying Install Additional components)
 
 🌠 Create a new Folder in Desktop and Name it as `Gd-utils`
 
 🌠 [Download this](https://github.com/roshanconnor123/gd-utils/archive/master.zip) and Extract it - copy all the contents to newly created `Gd-utils Folder` in your Desktop
 
+🌠 Open cmd inside `Gd-utils` Folder and type this
+```
+npm install --unsafe-perm=true --allow-root
+```
+> If it shows `0 vulnerabilities` means its success
 🌠 Go to Autorclone/folderclone Folder In your PC and Open Accounts Folder - Copy all the json files
 
 🌠 Go to `sa` Folder inside `Gd-utils` Folder and Paste all the json files there
