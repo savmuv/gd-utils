@@ -135,7 +135,7 @@ async function count ({ fid, update, sort, type, output, not_teamdrive, service_
   if (!update) {
     const info = get_all_by_fid(fid)
     if (info) {
-      console.log('Find local cache data, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
+      console.log('Locally cached data Found, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
       const out_str = get_out_str({ info, type, sort })
       if (output) return fs.writeFileSync(output, out_str)
       return console.log(out_str)
@@ -805,7 +805,7 @@ async function dedupe ({ fid, update, service_account, yes }) {
   if (!update) {
     const info = get_all_by_fid(fid)
     if (info) {
-      console.log('Find local cache data, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
+      console.log('Locally cached data Found, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
       arr = info
     }
   }
@@ -987,7 +987,7 @@ async function count ({ fid, update, sort, type, output, not_teamdrive, service_
     }
     const info = get_all_by_fid(fid)
     if (info) {
-      console.log('Find local cache data, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
+      console.log('Locally cached data Found, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
       if (type === 'snap') {
         const name = await get_name_by_id(fid, service_account)
         out_str = snap2html({ root: { name, id: fid }, data: info })
@@ -1714,7 +1714,7 @@ async function dedupe ({ fid, update, service_account, yes }) {
   if (!update) {
     const info = get_all_by_fid(fid)
     if (info) {
-      console.log('Find local cache data, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
+      console.log('Locally cached data Found, cache time：', dayjs(info.mtime).format('YYYY-MM-DD HH:mm:ss'))
       arr = info
     }
   }
