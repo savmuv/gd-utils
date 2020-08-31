@@ -15,13 +15,13 @@ Like Other Tools (Autorclone/Folderclone/Gclone/Fclone)  Gd-Utils is also based 
  Among These tools Only Autorclone & Folderclone can generate SAs by themselves
  
 >So for this tool to work you need SAs generated using [Autorclone](https://github.com/xyou365/AutoRclone) or [Folderclone](https://github.com/Spazzlo/folderclone)
-###📦 Pre Requisites:
+### 📦 Pre Requisites:
 
-1️⃣ This tool can be used in **Windows** , **Android** as well as **Linux OS**
+ This tool can be used in **Windows** , **Android** as well as **Linux OS**
 
-2️⃣ You need Generated **SAs** (Like I mentioned above)
+ You need Generated **SAs** (Like I mentioned above)
 
-3️⃣ If you are using this in **Linux** or **Android**
+ If you are using this in **Linux** or **Android**
 
 Create a new Repo in Github and name it as `accounts` and Upload all your SAs (json files) there
 
@@ -31,33 +31,33 @@ Create a new Repo in Github and name it as `accounts` and Upload all your SAs (j
 ❄️ Installation in Windows
 
 
-⚫ Install Nodejs in windows
+🔺 Install Nodejs in windows
 
 Go to [Nodejs](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and download the `msi` file and install it
 
-⚫ Create a new Folder in Desktop and Name it as `Gd-utils`
+🔺 Create a new Folder in Desktop and Name it as `Gd-utils`
 
-⚫ [Download this](https://github.com/roshanconnor123/gd-utils/archive/master.zip) and Extract it - copy all the contents to newly created `Gd-utils Folder` in your Desktop
+🔺 [Download this](https://github.com/roshanconnor123/gd-utils/archive/master.zip) and Extract it - copy all the contents to newly created `Gd-utils Folder` in your Desktop
 
-⚫ Go to Autorclone/folderclone Folder In your PC and Open Accounts Folder - Copy all the json files
+🔺 Go to Autorclone/folderclone Folder In your PC and Open Accounts Folder - Copy all the json files
 
-⚫ Go to `sa` Folder inside `Gd-utils` Folder and Paste all the json files there
+🔺 Go to `sa` Folder inside `Gd-utils` Folder and Paste all the json files there
 
 
 ❄️ Installation in Android
 
 
-⚫ Install [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en_IN%20%20) - Remember to enable Storage Permission by going to settings
+🔺 Install [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en_IN%20%20) - Remember to enable Storage Permission by going to settings
 
-⚫ Install Nodejs & Python & Git In Termux
+🔺 Install Nodejs & Python & Git In Termux
 ```
 pkg install python && pkg install && pkg install nodejs
 ```
-⚫ Installing Gd-utils
+🔺 Installing Gd-utils
 ```
 git clone https://github.com/roshanconnor123/gd-utils && cd gd-utils && npm install --unsafe-perm=true --allow-root
 ```
-⚫ Downloading Service accounts from your github and configuring it for Gdutils
+🔺 Downloading Service accounts from your github and configuring it for Gdutils
 ```
 sh sa.sh
 ```
@@ -70,7 +70,7 @@ sudo apt-get install build-essential && sudo apt-get update && curl -sL https://
 ```bash
 npm install --unsafe-perm=true --allow-root
 ```
-⚫ Downloading Service accounts from your github and configuring it for Gdutils
+🔺 Downloading Service accounts from your github and configuring it for Gdutils
 ```bash
 sh sa.sh
 ```
@@ -82,13 +82,13 @@ sh sa.sh
 
 🔷 Android
 
-🔺 Just run the code below in **Termux**
+ Just run the code below in **Termux**
 ```bash
 cd gd-utils && sh gdutils.sh
 ```
 🔷 Linux
 
-🔺 Just run the code below in **Terminal**
+ Just run the code below in **Terminal**
 ```bash
 cd gd-utils && sh gdutils.sh
 ```
