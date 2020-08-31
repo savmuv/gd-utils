@@ -1,88 +1,91 @@
 # Gd-Utils
 
-.Gd-Utils is just another Tool which helps us to Bypass the 750GB daily limit by google
+. Gd-Utils is just another Tool which helps us to Bypass the 750GB daily limit by google
 
 🌟 This Fork is an English version of the Gd-Utils by 
 
     https://github.com/iwestlin/gd-utils
-    https://github.com/vitaminx/gd-utils
-🌟 All I did is edit the code and used google translate to change chinese to English..so all Credits to the OPs
 
-🌟 I included only the Installation part for running in your system (Telegram Bot part is excluded)
+🌟 All I did is edit the code and used google translate to change chinese to English..so all Credits to the OP
+
+🌟 I included only the Installation part for running in your system ([Telegram Bot part is here](https://github.com/roshanconnor123/Gdutils_Tgbot))
 ## General Instructions
 Like Other Tools (Autorclone/Folderclone/Gclone/Fclone)  Gd-Utils is also based upon Service accounts aka SAs
 
-.Among These tools Only Autorclone & Folderclone can generate SAs by themselves
+. Among These tools Only Autorclone & Folderclone can generate SAs by themselves
 >So for this tool to work you need SAs generated using [Autorclone](https://github.com/xyou365/AutoRclone) or [Folderclone](https://github.com/Spazzlo/folderclone)
-### Pre Requisites:
+### 📦 Pre Requisites:
 
-1️⃣ Currently this tool can be installed only in **Linux OS**
-
-⚫ If you are someone using **Windows** then I suggest install **Ubuntu** From the Microsoft store and Use **WSL1** or **WSL2** to access it 
->You can Go through [Here](https://ubuntu.com/wsl) or [Here](https://docs.microsoft.com/en-us/windows/wsl/install-win10) to read about it
-
-⚫ If you are someone Using **Android** -Then you can install Ubuntu in your Phone via termux and follow the same steps as WSL1 for Installation
->You can read about Installation Of Ubuntu in Android [Here](https://github.com/AndronixApp/AndronixOrigin)
+1️⃣ This tool can be used in **Windows** , **Android** as well as **Linux OS**
 
 2️⃣ You need Generated **SAs** (Like I mentioned above)
 
-3️⃣ Some Patience to Read 😊
+3️⃣ If you are using this in **Linux**or **Android**
 
+Create a new Repo in Github and name it as `accounts` and Upload all your SAs (json files) there
+
+[Follow this to understand better](https://telegra.ph/Uploading-Service-Accounts-to-Github-07-09)
 
 ## Installation
-🔳 Installation for WSL1 or Installation in Android (Inside Ubuntu)
+🔳 Installation in Windows
 
-Just Copy the following Code and Paste in your Terminal
+⚫ Install Nodejs in windows
 
-! Warning - We are Downgrading libc6 because its giving some errors in WSL1 (According to the Post [Here](https://github.com/microsoft/WSL/issues/5125))
-```bash
-sudo apt-get install build-essential && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils/ && sudo add-apt-repository ppa:rafaeldtinoco/lp1871129 && sudo apt update && sudo apt install libc6=2.31-0ubuntu8+lp1871129~1 libc6-dev=2.31-0ubuntu8+lp1871129~1 libc-dev-bin=2.31-0ubuntu8+lp1871129~1 -y --allow-downgrades && sudo apt-mark hold libc6 && cd Gdutils
-```
-```bash
-npm install --unsafe-perm=true --allow-root
-```
-⚫ After this is Done
+Go to [Nodejs](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and download the `msi` file and install it
+
+⚫ Create a new Folder in Desktop and Name it as `Gd-utils`
+
+⚫ [Download this](https://github.com/roshanconnor123/gd-utils/archive/master.zip) and Extract it - copy all the contents to newly created `Gd-utils Folder` in your Desktop
 
 ⚫ Go to Autorclone/folderclone Folder In your PC and Open Accounts Folder - Copy all the json files
 
-⚫ Go to C:\Users\You_User_Name\gd-utils\sa and Paste all the json files there
+⚫ Go to `sa` Folder inside `Gd-utils` Folder and Paste all the json files there
 
-🔳 Installation in WSL2
+🔳 Installation in Android
 
-Just Copy the following Code and Paste in your Terminal
+⚫ Install [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en_IN%20%20) - Remember to enable Storage Permission by going to settings
+
+⚫ Install Nodejs & Python & Git In Termux
+```
+pkg install python && pkg install && pkg install nodejs
+```
+⚫ Installing Gd-utils
+```
+git clone https://github.com/roshanconnor123/gd-utils && cd gd-utils && npm install --unsafe-perm=true --allow-root
+```
+⚫ Downloading Service accounts from your github and configuring it for Gdutils
+```
+sh sa.sh
+```
+🔳 Installation in Linux
+
 ```bash
 sudo apt-get install build-essential && sudo apt-get update && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils/ && cd gd-utils
 ```
 ```bash
 npm install --unsafe-perm=true --allow-root
 ```
-⚫ After this is Done
-
-⚫ Go to Autorclone/folderclone Folder In your PC and Open Accounts Folder - Copy all the json files
-
-⚫ Go to C:\Users\You_User_Name\gd-utils\sa and Paste all the json files there
+⚫ Downloading Service accounts from your github and configuring it for Gdutils
+```bash
+sh sa.sh
+```
 ## Usage
-🔷 Copy Command
+🔷 Windows
+
+🔴 Double Click on **gdutils.bat** File (In Gd-utils Folder)
+
+🔷 Android
+
+🔴 Just run the code below in **Termux**
 ```bash
-cd ~/gd-utils
-node --max-old-space-size=1024 copy SourceFolderID DestinationFolderID -S
+cd gd-utils && sh gdutils.sh
 ```
-🔷 Size Command
+🔷 Linux
+
+🔴 Just run the code below in **Terminal**
 ```bash
-cd ~/gd-utils
-node count FolderID -S -u
-node count FolderID -S -u -t tree -o tree.html (Will create tree.html inside gd-utils folder with tree like arrangament of files with size)
+cd gd-utils && sh gdutils.sh
 ```
-🔷 Dedupe Command
-```bash
-cd ~/gd-utils
-node dedupe FolderID -S -u
-```
-🔷 Help Commands
-```bash
-node copy -h
-node count -h
-node dedupe -h
 ```
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
