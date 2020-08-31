@@ -1,6 +1,6 @@
 # Gd-Utils
 
-. Gd-Utils is just another Tool which helps us to Bypass the 750GB daily limit by google
+ Gd-Utils is just another Tool which helps us to Bypass the 750GB daily limit by google
 
 🌟 This Fork is an English version of the Gd-Utils by 
 
@@ -12,22 +12,24 @@
 ## General Instructions
 Like Other Tools (Autorclone/Folderclone/Gclone/Fclone)  Gd-Utils is also based upon Service accounts aka SAs
 
-. Among These tools Only Autorclone & Folderclone can generate SAs by themselves
+ Among These tools Only Autorclone & Folderclone can generate SAs by themselves
+ 
 >So for this tool to work you need SAs generated using [Autorclone](https://github.com/xyou365/AutoRclone) or [Folderclone](https://github.com/Spazzlo/folderclone)
-### 📦 Pre Requisites:
+###📦 Pre Requisites:
 
 1️⃣ This tool can be used in **Windows** , **Android** as well as **Linux OS**
 
 2️⃣ You need Generated **SAs** (Like I mentioned above)
 
-3️⃣ If you are using this in **Linux**or **Android**
+3️⃣ If you are using this in **Linux** or **Android**
 
 Create a new Repo in Github and name it as `accounts` and Upload all your SAs (json files) there
 
 [Follow this to understand better](https://telegra.ph/Uploading-Service-Accounts-to-Github-07-09)
 
 ## Installation
-🔳 Installation in Windows
+❄️ Installation in Windows
+
 
 ⚫ Install Nodejs in windows
 
@@ -41,7 +43,9 @@ Go to [Nodejs](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and downl
 
 ⚫ Go to `sa` Folder inside `Gd-utils` Folder and Paste all the json files there
 
-🔳 Installation in Android
+
+❄️ Installation in Android
+
 
 ⚫ Install [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en_IN%20%20) - Remember to enable Storage Permission by going to settings
 
@@ -57,7 +61,8 @@ git clone https://github.com/roshanconnor123/gd-utils && cd gd-utils && npm inst
 ```
 sh sa.sh
 ```
-🔳 Installation in Linux
+
+❄️ Installation in Linux
 
 ```bash
 sudo apt-get install build-essential && sudo apt-get update && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils/ && cd gd-utils
@@ -69,23 +74,23 @@ npm install --unsafe-perm=true --allow-root
 ```bash
 sh sa.sh
 ```
+
 ## Usage
 🔷 Windows
 
-🔴 Double Click on **gdutils.bat** File (In Gd-utils Folder)
+ Double Click on **gdutils.bat** File (In Gd-utils Folder)
 
 🔷 Android
 
-🔴 Just run the code below in **Termux**
+🔺 Just run the code below in **Termux**
 ```bash
 cd gd-utils && sh gdutils.sh
 ```
 🔷 Linux
 
-🔴 Just run the code below in **Terminal**
+🔺 Just run the code below in **Terminal**
 ```bash
 cd gd-utils && sh gdutils.sh
-```
 ```
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
