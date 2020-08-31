@@ -45,7 +45,8 @@ Go to [Nodejs](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and downl
 ```
 npm install --unsafe-perm=true --allow-root
 ```
-> If it shows `0 vulnerabilities` means its success
+ If it shows `0 vulnerabilities` it means that installation is successful
+
 🌠 Go to Autorclone/folderclone Folder In your PC and Open Accounts Folder - Copy all the json files
 
 🌠 Go to `sa` Folder inside `Gd-utils` Folder and Paste all the json files there
