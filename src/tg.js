@@ -9,7 +9,7 @@ const { AUTH, DEFAULT_TARGET, USE_PERSONAL_AUTH } = require('../config')
 const { tg_token } = AUTH
 const gen_link = (fid, text) => `<a href="https://drive.google.com/drive/folders/${fid}">${text || fid}</a>`
 
-if (!tg_token) throw new Error('Please set tg_token in config.js first')
+if (!tg_token) throw new Error('Please set Bot_token in config.js first')
 const { https_proxy } = process.env
 const axins = axios.create(https_proxy ? { httpsAgent: new HttpsProxyAgent(https_proxy) } : {})
 
@@ -23,57 +23,56 @@ async function get_folder_name (fid) {
 }
 
 function send_help (chat_id) {
-  const text = `<pre>[Using help]
-command ｜ Description
+  const text = `<pre>[Information]
+Command ｜ Description
 =====================
-/help | Back to this article
+/reload | Restart the Task
 =====================
-/count shareID [-u] | Return sourceID file statistics
-sourceID can be the google drive sharing URL itself，It can also be a shared ID。If you add -u at the end，Ignore the previous record and force it to be obtained online，Suitable for shared links that are updated after a while。
+/count FolderID [-u] | Shows Size
+You can provide drive link too instead of FolderID
+adding -u at the end is optional 
 =====================
-/copy sourceID targetID [-u] | Copy the sourceID file and destinationID (a new folder will be created)
-If destinantionID is not filled, it will be copied to the default location (set in config.js）。
-If bookmark is set，Then bookmark will be used as destinationID。
-If -u is added at the end，Ignore the local cache and force the source folder information to be obtained online。
-After the command starts to execute, it will reply the taskID of this task。
+/copy sourceID DestID [-u] | Copy Files（Will create a New Folder）
+If targetID is not filled in, it will be copied to the default location (set in config.js)
+adding -u at the end is optional
 =====================
-/task | Return the info about the corresponding task
+/task | Shows info about the running task
 Example：
-/task | Return details of all running tasks
-/task 7 | Return task number 7
-/task all | Return to list of all task records
-/task clear | Clear all task records with completed status
-/task rm 7 | Delete task record number 7
+/task | Shows info about the running task
+/task 7 | Shows details of task number 7
+/task all | Details of all records
+/task clear | Clear al records
+/task rm 7 | Clear Task number 7
 =====================
-/bm [action] [alias] [target] | bookmark，Add common destination folderID
-After entering the URL, it will appear below the two buttons "Document Statistics" and "Start Copying"，Easy to copy to frequently used locations。
-Example：
-/bm | Return to favorites of all settings
-/bm set movie folder-id | Add folder-id to favorites，It is set as Movie
-/bm unset movie | Delete this favorite
+/bm [action] [alias] [target] | bookmark，Add a common FolderID
+Helpful while copying to same destination folder multiple times。
+Eg：
+/bm | Shows all bookmarks
+/bm set movie folder-id | Add a Bookmark by the name movie
+/bm unset movie | Delete this bookmark
 </pre>`
   return sm({ chat_id, text, parse_mode: 'HTML' })
 }
 
 function send_bm_help (chat_id) {
-  const text = `<pre>/bm [action] [alias] [target] | bookmark，Add common destination folderID
-After entering the URL, it will appear below the two buttons "Document Statistics" and "Start Copying"，Easy to copy to frequently used locations。
-Example：
-/bm | Return all favorites
-/bm set movie folder-id | Add folder-id to favorites，The alias is set to movie
-/bm unset movie | Delete this favorite
+  const text = `<pre>/bm [action] [alias] [target] | bookmark，Add a common FolderID
+Helpful while copying to same destination folder multiple times。
+Eg：
+/bm | Shows all bookmarks
+/bm set movie folder-id | Add a Bookmark by the name movie
+/bm unset movie | Delete this bookmark
 </pre>`
   return sm({ chat_id, text, parse_mode: 'HTML' })
 }
 
 function send_task_help (chat_id) {
-  const text = `<pre>/task [action/id] [id] | Manage running tasks
+  const text = `<pre>/task | Shows info about the running task
 Example：
-/task | Return details of all running tasks
-/task 7 | Return task number 7
-/task all | Return to list of all task records
-/task clear | Clear all task records with completed status
-/task rm 7 | Delete task number 7
+/task | Shows info about the running task
+/task 7 | Shows details of task number 7
+/task all | Details of all records
+/task clear | Clear al records
+/task rm 7 | Clear Task number 7
 </pre>`
   return sm({ chat_id, text, parse_mode: 'HTML' })
 }
@@ -81,22 +80,22 @@ Example：
 function clear_tasks (chat_id) {
   const finished_tasks = db.prepare('select id from task where status=?').all('finished')
   finished_tasks.forEach(task => rm_task({ task_id: task.id }))
-  sm({ chat_id, text: 'Cleared all task records whose status is completed' })
+  sm({ chat_id, text: 'All completed tasks have been cleared' })
 }
 
 function rm_task ({ task_id, chat_id }) {
   const exist = db.prepare('select id from task where id=?').get(task_id)
-  if (!exist) return sm({ chat_id, text: `No number exists ${task_id} Task record` })
+  if (!exist) return sm({ chat_id, text: `Task ${task_id} doesnt exist 😀` })
   db.prepare('delete from task where id=?').run(task_id)
   db.prepare('delete from copied where taskid=?').run(task_id)
-  if (chat_id) sm({ chat_id, text: `Task deleted ${task_id} Record` })
+  if (chat_id) sm({ chat_id, text: `Task ${task_id} Deleted` })
 }
 
 function send_all_bookmarks (chat_id) {
   let records = db.prepare('select alias, target from bookmark').all()
-  if (!records.length) return sm({ chat_id, text: 'No favorites in the database' })
+  if (!records.length) return sm({ chat_id, text: 'No Bookmarks Found' })
   const tb = new Table({ style: { head: [], border: [] } })
-  const headers = ['alias', 'FolderID']
+  const headers = ['Name', 'FolderID']
   records = records.map(v => [v.alias, v.target])
   tb.push(headers, ...records)
   const text = tb.toString().replace(/─/g, '—')
@@ -105,16 +104,16 @@ function send_all_bookmarks (chat_id) {
 
 function set_bookmark ({ chat_id, alias, target }) {
   const record = db.prepare('select alias from bookmark where alias=?').get(alias)
-  if (record) return sm({ chat_id, text: 'A bookmark with the same name already exists in the database' })
+  if (record) return sm({ chat_id, text: 'There is anothe Favourite Folder with the same name' })
   db.prepare('INSERT INTO bookmark (alias, target) VALUES (?, ?)').run(alias, target)
-  return sm({ chat_id, text: `Bookmark successfully set：${alias} | ${target}` })
+  return sm({ chat_id, text: `Bookmark Succesfully Set 💌：${alias} | ${target}` })
 }
 
 function unset_bookmark ({ chat_id, alias }) {
   const record = db.prepare('select alias from bookmark where alias=?').get(alias)
-  if (!record) return sm({ chat_id, text: 'No favourites found' })
+  if (!record) return sm({ chat_id, text: 'No Bookmarks found with this Name' })
   db.prepare('delete from bookmark where alias=?').run(alias)
-  return sm({ chat_id, text: 'Successfully deleted favorites ' + alias })
+  return sm({ chat_id, text: 'Bookmark succesfully deleted 😕 ' + alias })
 }
 
 function get_target_by_alias (alias) {
@@ -130,26 +129,19 @@ function get_alias_by_target (target) {
 function send_choice ({ fid, chat_id }) {
   return sm({
     chat_id,
-    text: `Identify the shared ID ${fid}，Please select any one option`,
+    text: `The FolderID ${fid} is Identified，Choose what would you like to do`,
     reply_markup: {
       inline_keyboard: [
         [
-          { text: 'File stats', callback_data: `count ${fid}` },
-          { text: 'Start copying', callback_data: `copy ${fid}` }
+          { text: 'Calculate Size', callback_data: `count ${fid}` },
+          { text: 'Copy', callback_data: `copy ${fid}` }
         ],
         [
-          { text: 'Forced refresh', callback_data: `update ${fid}` },
+          { text: 'Refresh', callback_data: `update ${fid}` },
           { text: 'Clear', callback_data: `clear_button` }
         ]
       ].concat(gen_bookmark_choices(fid))
     }
-  })
-}
-
-function clear_button ({ message_id, text, chat_id }) {
-  const url = `https://api.telegram.org/bot${tg_token}/editMessageText`
-  return axins.post(url, { chat_id, message_id, text, parse_mode: 'HTML' }).catch(e => {
-    console.error('fail to clear_button', e.message)
   })
 }
 
@@ -168,7 +160,7 @@ function gen_bookmark_choices (fid) {
 
 async function send_all_tasks (chat_id) {
   let records = db.prepare('select id, status, ctime from task').all()
-  if (!records.length) return sm({ chat_id, text: 'There is no task record in the database' })
+  if (!records.length) return sm({ chat_id, text: 'No task record in the database' })
   const tb = new Table({ style: { head: [], border: [] } })
   const headers = ['ID', 'status', 'ctime']
   records = records.map(v => {
@@ -181,15 +173,13 @@ async function send_all_tasks (chat_id) {
   return axins.post(url, {
     chat_id,
     parse_mode: 'HTML',
-    text: `All copy tasks：\n<pre>${text}</pre>`
+    text: `All Copy Tasks：\n<pre>${text}</pre>`
   }).catch(err => {
+    console.error(err.message)
     // const description = err.response && err.response.data && err.response.data.description
     // if (description && description.includes('message is too long')) {
-    if (true) {
-      const text = [headers].concat(records).map(v => v.join('\t')).join('\n')
-      return sm({ chat_id, parse_mode: 'HTML', text: `All copy tasks：\n<pre>${text}</pre>` })
-    }
-    console.error(err)
+    const text = [headers].concat(records.slice(-100)).map(v => v.join('\t')).join('\n')
+    return sm({ chat_id, parse_mode: 'HTML', text: `All copy tasks (The last 100)：\n<pre>${text}</pre>` })
   })
 }
 
@@ -204,24 +194,24 @@ async function get_task_info (task_id) {
   const { file_count, folder_count, total_size } = summary ? JSON.parse(summary) : {}
   const total_count = (file_count || 0) + (folder_count || 0)
   const copied_folders = folder_mapping ? (folder_mapping.length - 1) : 0
-  let text = 'Task number：' + task_id + '\n'
+  let text = 'Task No：' + task_id + '\n'
   const folder_name = await get_folder_name(source)
-  text += 'Source folder：' + gen_link(source, folder_name) + '\n'
-  text += 'Destination Location：' + gen_link(target, get_alias_by_target(target)) + '\n'
-  text += 'New Folder：' + (new_folder ? gen_link(new_folder) : 'Not created yet') + '\n'
-  text += 'Task status：' + status + '\n'
-  text += 'Creation Time：' + dayjs(ctime).format('YYYY-MM-DD HH:mm:ss') + '\n'
-  text += 'Complete Time：' + (ftime ? dayjs(ftime).format('YYYY-MM-DD HH:mm:ss') : 'Undone') + '\n'
-  text += 'Folder progress：' + copied_folders + '/' + (folder_count === undefined ? 'Unknown Count' : folder_count) + '\n'
-  text += 'File progress：' + copied_files + '/' + (file_count === undefined ? 'Unknown count' : file_count) + '\n'
-  text += 'Total percentage：' + ((copied_files + copied_folders) * 100 / total_count).toFixed(2) + '%\n'
-  text += 'Total Size：' + (total_size || 'Unknown Size')
+  text += 'Source Folder：' + gen_link(source, folder_name) + '\n'
+  text += 'Destination Folder：' + gen_link(target, get_alias_by_target(target)) + '\n'
+  text += 'New Folder：' + (new_folder ? gen_link(new_folder) : 'Not Created yet') + '\n'
+  text += 'Task Status：' + status + '\n'
+  text += 'Start Time：' + dayjs(ctime).format('YYYY-MM-DD HH:mm:ss') + '\n'
+  text += 'End Time：' + (ftime ? dayjs(ftime).format('YYYY-MM-DD HH:mm:ss') : 'Not Done') + '\n'
+  text += 'Folder Progress：' + copied_folders + '/' + (folder_count === undefined ? 'Unknown' : folder_count) + '\n'
+  text += 'File Progress：' + copied_files + '/' + (file_count === undefined ? 'Unkno wn' : file_count) + '\n'
+  text += 'Total Percentage：' + ((copied_files + copied_folders) * 100 / total_count).toFixed(2) + '%\n'
+  text += 'Total Size：' + (total_size || 'Unknown')
   return { text, status, folder_count }
 }
 
 async function send_task_info ({ task_id, chat_id }) {
   const { text, status, folder_count } = await get_task_info(task_id)
-  if (!text) return sm({ chat_id, text: 'The task ID does not exist in the database：' + task_id })
+  if (!text) return sm({ chat_id, text: 'he task ID does not exist in the database：' + task_id })
   const url = `https://api.telegram.org/bot${tg_token}/sendMessage`
   let message_id
   try {
@@ -230,38 +220,39 @@ async function send_task_info ({ task_id, chat_id }) {
   } catch (e) {
     console.log('fail to send message to tg', e.message)
   }
-  // get_task_info Eat cpu when the number of task directories is too large，In the future, it is better to save the mapping as a separate table
+  // get_task_info crash cpu when the number of Folders is too large，In the future, it is better to save the mapping as a separate table
   if (!message_id || status !== 'copying') return
   const loop = setInterval(async () => {
-    const url = `https://api.telegram.org/bot${tg_token}/editMessageText`
     const { text, status } = await get_task_info(task_id)
+    // TODO check if text changed
     if (status !== 'copying') clearInterval(loop)
-    axins.post(url, { chat_id, message_id, text, parse_mode: 'HTML' }).catch(e => console.error(e.message))
+    sm({ chat_id, message_id, text, parse_mode: 'HTML' }, 'editMessageText')
   }, 10 * 1000)
 }
 
 async function tg_copy ({ fid, target, chat_id, update }) { // return task_id
   target = target || DEFAULT_TARGET
-  if (!target) {
-    sm({ chat_id, text: 'Please enter the destination ID or set the default copy destination ID in config.js first(DEFAULT_TARGET)' })
-    return
-  }
+  if (!target) return sm({ chat_id, text: 'Please enter the destination ID or set the default copy destination ID in config.js first(DEFAULT_TARGET)' })
+
   const file = await get_info_by_id(fid, !USE_PERSONAL_AUTH)
+  if (!file) {
+    const text = `Unable to get info，Please check if the link is valid and the SAs have appropriate permissions：https://drive.google.com/drive/folders/${fid}`
+    return sm({ chat_id, text })
+  }
   if (file && file.mimeType !== 'application/vnd.google-apps.folder') {
     return copy_file(fid, target, !USE_PERSONAL_AUTH).then(data => {
-      sm({ chat_id, parse_mode: 'HTML', text: `File copied succesfully，File Location：${gen_link(target)}` })
+      sm({ chat_id, parse_mode: 'HTML', text: `Copied the File succesfully，File：${gen_link(target)}` })
     }).catch(e => {
-      sm({ chat_id, text: `Failed to copy the file, failure message：${e.message}` })
+      sm({ chat_id, text: `Failed to copy the File，Reason：${e.message}` })
     })
   }
 
   let record = db.prepare('select id, status from task where source=? and target=?').get(fid, target)
   if (record) {
     if (record.status === 'copying') {
-      sm({ chat_id, text: 'Tasks with the same source ID and destination ID are already in progress，to know about the progress type /task ' + record.id })
-      return
+      return sm({ chat_id, text: 'Same  Task alreading in Progress，Check it here /task ' + record.id })
     } else if (record.status === 'finished') {
-      sm({ chat_id, text: `existing task Detected ${record.id}，Start Copying` })
+      sm({ chat_id, text: `Existing Task detected ${record.id}，Start copying` })
     }
   }
 
@@ -279,7 +270,7 @@ async function tg_copy ({ fid, target, chat_id, update }) { // return task_id
       if (!record) record = {}
       console.error('Copy Failed', fid, '-->', target)
       console.error(err)
-      sm({ chat_id, text: (task_id || '') + 'Task error, error message：' + err.message })
+      sm({ chat_id, text: (task_id || '') + 'Error，Reason：' + err.message })
     })
 
   while (!record) {
@@ -299,56 +290,77 @@ function reply_cb_query ({ id, data }) {
   const url = `https://api.telegram.org/bot${tg_token}/answerCallbackQuery`
   return axins.post(url, {
     callback_query_id: id,
-    text: 'Start processing ' + data
+    text: 'Start the Task ' + data
   })
 }
 
 async function send_count ({ fid, chat_id, update }) {
-  sm({ chat_id, text: `Get Started ${fid} Collecting files info，Please wait，It is recommended not to start copying before the statistics are completed，Because copying also needs to get the source folder info first` })
-  const table = await gen_count_body({ fid, update, type: 'tg', service_account: !USE_PERSONAL_AUTH })
-  if (!table) return sm({ chat_id, parse_mode: 'HTML', text: gen_link(fid) + ' Failed to obtain info' })
+  const gen_text = payload => {
+    const { obj_count, processing_count, pending_count } = payload || {}
+    const now = dayjs().format('YYYY-MM-DD HH:mm:ss')
+    return `Size：${gen_link(fid)}
+Time：${now}
+Number of Files：${obj_count || ''}
+${pending_count ? ('Pending：' + pending_count) : ''}
+${processing_count ? ('Ongoing：' + processing_count) : ''}`
+  }
+
   const url = `https://api.telegram.org/bot${tg_token}/sendMessage`
+  let response
+  try {
+    response = await axins.post(url, { chat_id, text: `Collecting info about ${fid}，Please wait，It is recommended not to start copying before this gets over` })
+  } catch (e) {}
+  const { data } = response || {}
+  const message_id = data && data.result && data.result.message_id
+  const message_updater = payload => sm({
+    chat_id,
+    message_id,
+    parse_mode: 'HTML',
+    text: gen_text(payload)
+  }, 'editMessageText')
+
+  const service_account = !USE_PERSONAL_AUTH
+  const table = await gen_count_body({ fid, update, service_account, type: 'tg', tg: message_id && message_updater })
+  if (!table) return sm({ chat_id, parse_mode: 'HTML', text: gen_link(fid) + ' Failed to obtain info' })
   const gd_link = `https://drive.google.com/drive/folders/${fid}`
   const name = await get_folder_name(fid)
   return axins.post(url, {
     chat_id,
     parse_mode: 'HTML',
     text: `<pre>Source Folder Name：${name}
-Source Link：${gd_link}
+Source Folder Link：${gd_link}
 ${table}</pre>`
   }).catch(async err => {
+    console.log(err.message)
     // const description = err.response && err.response.data && err.response.data.description
     // const too_long_msgs = ['request entity too large', 'message is too long']
     // if (description && too_long_msgs.some(v => description.toLowerCase().includes(v))) {
-    if (true) {
-      const smy = await gen_count_body({ fid, type: 'json', service_account: !USE_PERSONAL_AUTH })
-      const { file_count, folder_count, total_size } = JSON.parse(smy)
-      return sm({
-        chat_id,
-        parse_mode: 'HTML',
-        text: `Link：<a href="https://drive.google.com/drive/folders/${fid}">${fid}</a>\n<pre>
-The table is too long and exceeds the telegram message limit，Only show summary：
-Folder name：${name}
-Total number of Files：${file_count}
-Total number of Folders：${folder_count}
-Total Size：${total_size}
-</pre>`
-      })
-    }
-    throw err
+    const limit = 20
+    const table = await gen_count_body({ fid, type: 'tg', service_account: !USE_PERSONAL_AUTH, limit })
+    return sm({
+      chat_id,
+      parse_mode: 'HTML',
+      text: `<pre>Source Folder Name：${name}
+Source Folder Link：${gd_link}
+The table is too long and exceeds the telegram message limit, only the first ${limit} will be displayed：
+${table}</pre>`
+    })
   })
 }
 
-function sm (data) {
-  const url = `https://api.telegram.org/bot${tg_token}/sendMessage`
+function sm (data, endpoint) {
+  endpoint = endpoint || 'sendMessage'
+  const url = `https://api.telegram.org/bot${tg_token}/${endpoint}`
   return axins.post(url, data).catch(err => {
     // console.error('fail to post', url, data)
     console.error('fail to send message to tg:', err.message)
+    const err_data = err.response && err.response.data
+    err_data && console.error(err_data)
   })
 }
 
 function extract_fid (text) {
-  text = text.replace(/^\/count/, '').replace(/^\/copy/, '').replace(/\\/g, '').trim()
+  text = text.replace(/^\/count/, '').replace(/^\/copy/, '').replace(/\\n/g, '').replace(/\\/g, '').trim()
   const [source, target] = text.split(' ').map(v => v.trim())
   if (validate_fid(source)) return source
   try {
@@ -368,9 +380,10 @@ function extract_fid (text) {
 }
 
 function extract_from_text (text) {
-  const reg = /https?:\/\/drive.google.com\/[^\s]+/g
+  // const reg = /https?:\/\/drive.google.com\/[^\s]+/g
+  const reg = /https?:\/\/drive.google.com\/[a-zA-Z0-9_\\/?=&-]+/g
   const m = text.match(reg)
   return m && extract_fid(m[0])
 }
 
-module.exports = { send_count, send_help, sm, extract_fid, reply_cb_query, send_choice, send_task_info, send_all_tasks, tg_copy, extract_from_text, get_target_by_alias, send_bm_help, send_all_bookmarks, set_bookmark, unset_bookmark, clear_tasks, send_task_help, rm_task, clear_button }
+module.exports = { send_count, send_help, sm, extract_fid, reply_cb_query, send_choice, send_task_info, send_all_tasks, tg_copy, extract_from_text, get_target_by_alias, send_bm_help, send_all_bookmarks, set_bookmark, unset_bookmark, clear_tasks, send_task_help, rm_task }
