@@ -59,7 +59,7 @@ npm install --unsafe-perm=true --allow-root
 
 🌠 Install Nodejs & Python & Git In Termux
 ```
-pkg install python && pkg install && pkg install nodejs
+pkg install python && pkg install git && pkg install nodejs
 ```
 🌠 Installing Gd-utils
 ```
