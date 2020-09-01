@@ -19,7 +19,7 @@ PURPLE="${COLOR}1;35m"
 # ★★★Copy from source to destination★★★
 copy() {
   cd ~ && cd gd-utils
-  echo "${RED}Remember to add your Service accounts as Viewer in source TD and as Contributor in Destination TD${NORMAL}"
+  echo "${RED}Remember to add your SAs as Viewer in source TD and as a Contributor in Destination TD${NORMAL}"
   echo "Provide Folder ID"
   read SRC
   echo "Provide Folder ID"
@@ -47,7 +47,7 @@ copy() {
 # ★★★Calculate the size★★★
 count() {
   cd ~ && cd gd-utils
-  echo "${RED}Remember to add your Service accounts as Viewer (atleast) in source TD${NORMAL}"
+  echo "${RED}Remember to add your SAs as Viewer (atleast) in source TD${NORMAL}"
   echo "Provide Folder ID"
   read SRC
   echo "${RED}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${NORMAL}"
@@ -78,8 +78,8 @@ count() {
 }
 # ★★★Dedupe The Folder★★★
 dedupe() {
-  cd ~gd-utils
-  echo "${RED}Remember to add your Service accounts as Content manager (atleast) in source TD${NORMAL}\n"
+  cd ~ && cd gd-utils
+  echo "${RED}Remember to add your SAs as Content manager (atleast) in source TD${NORMAL}\n"
   echo "Provide Folder ID\n"
   read SRC 
   node dedupe $SRC -S
@@ -115,26 +115,4 @@ case "$option" in
     echo
     echo " ${RED}Choose Correct Number from the Options${NORMAL}"
     ;;
-esac	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+esac
