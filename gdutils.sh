@@ -46,7 +46,7 @@ copy() {
 }
 # ★★★Calculate the size★★★
 count() {
-  cd ~gd-utils
+  cd ~ && cd gd-utils
   echo "${RED}Remember to add your Service accounts as Viewer (atleast) in source TD${NORMAL}"
   echo "Provide Folder ID"
   read SRC
@@ -64,9 +64,11 @@ count() {
 	  ;;
   B)
       node count $SRC -S -t tree -o /sdcard/Tree.html
+      echo " Check your Internal storage to find a file called Tree.html"
       ;;
   C) 
       node count $SRC -S -t snap -o /sdcard/Index.html
+      echo "Check your Internal Storag to find a file called Index.html"
       ;;	  
   *)
       echo
