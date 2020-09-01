@@ -24,7 +24,7 @@ PURPLE="${COLOR}1;35m"
   read Password
   cd ~
   git clone https://"$username":"$Password"@github.com/"$username"/accounts
-  cp accounts/*.json ~gd-utils/sa/
+  cp accounts/*.json gd-utils/sa/
   echo "${BLUE}Service accounts are added to Gdutils${NORMAL}"
   exit
  
