@@ -76,7 +76,7 @@ sh sa.sh
 
 🌠 Intsalling the Dependancies and Gdutils
 ```bash
-sudo apt-get install build-essential && sudo apt-get update && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils
+sudo apt-get install build-essential && sudo apt-get update && curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get install -y nodejs && git clone https://github.com/roshanconnor123/gd-utils
 ```
 ```bash
 cd gd-utils && npm install --unsafe-perm=true --allow-root
