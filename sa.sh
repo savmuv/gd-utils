@@ -7,17 +7,25 @@
 # System Required: Debian/Ubuntu
 #=============================================================
 
-COLOR="\033["
-NORMAL="${COLOR}0m"
-YELLOW="${COLOR}1;33m"
-RED="${COLOR}1;31m"
-CYAN="${COLOR}1;36m"
-BLUE="${COLOR}1;34m"
-GREEN="${COLOR}1;32m"
-PURPLE="${COLOR}1;35m"
+cecho() {
+        local code="\033["
+        case "$1" in
+                black  | bk) color="${code}0;30m";;
+                red    |  r) color="${code}1;31m";;
+                green  |  g) color="${code}1;32m";;
+                yellow |  y) color="${code}1;33m";;
+                blue   |  b) color="${code}1;34m";;
+                purple |  p) color="${code}1;35m";;
+                cyan   |  c) color="${code}1;36m";;
+                gray   | gr) color="${code}0;37m";;
+                *) local text="$1"
+        esac
+        [ -z "$text" ] && local text="$color$2${code}0m"
+        echo -e "$text"
+}
 
 # ★★★Downloading Service accounts★★★
-  echo && echo "${RED}Downloading the service accounts from your private repo${NORMAL}"
+  echo && cecho r "Downloading the service accounts from your private repo"
   echo "Provide github username"
   read username
   echo "Provide github password"
@@ -25,6 +33,6 @@ PURPLE="${COLOR}1;35m"
   cd ~
   git clone https://"$username":"$Password"@github.com/"$username"/accounts
   cp accounts/*.json gd-utils/sa/
-  echo "${BLUE}Service accounts are added to Gdutils${NORMAL}"
+  cecho b "Service accounts are added to Gdutils"
   exit
  
