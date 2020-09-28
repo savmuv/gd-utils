@@ -7,28 +7,36 @@
 # System Required: Debian/Ubuntu
 #=============================================================
 
-COLOR="\033["
-NORMAL="${COLOR}0m"
-YELLOW="${COLOR}1;33m"
-RED="${COLOR}1;31m"
-CYAN="${COLOR}1;36m"
-BLUE="${COLOR}1;34m"
-GREEN="${COLOR}1;32m"
-PURPLE="${COLOR}1;35m"
+cecho() {
+        local code="\033["
+        case "$1" in
+                black  | bk) color="${code}0;30m";;
+                red    |  r) color="${code}1;31m";;
+                green  |  g) color="${code}1;32m";;
+                yellow |  y) color="${code}1;33m";;
+                blue   |  b) color="${code}1;34m";;
+                purple |  p) color="${code}1;35m";;
+                cyan   |  c) color="${code}1;36m";;
+                gray   | gr) color="${code}0;37m";;
+                *) local text="$1"
+        esac
+        [ -z "$text" ] && local text="$color$2${code}0m"
+        echo -e "$text"
+}
 
 # ★★★Copy from source to destination★★★
 copy() {
   cd ~ && cd gd-utils
-  echo "${RED}Remember to add your SAs as Viewer in source TD and as a Contributor in Destination TD${NORMAL}"
-  echo "Provide Folder ID"
+  cecho r "Remember to add your SAs as Viewer in source TD and as a Contributor in Destination TD"
+  echo "Provide Source Folder ID"
   read SRC
-  echo "Provide Folder ID"
+  echo "Provide Destination Folder ID"
   read DST
-  echo "${RED}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${NORMAL}"
-  echo && echo "Copy mode selected
+  cecho r "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+  echo && echo "Copy mode selected"
   
-  ${PURPLE}A.Create a New Folder with the same name in the destination
-  B.Donot create a new Folder in the destination${NORMAL}" && echo
+  cecho p "A.Create a New Folder with the same name in the destination"
+  cecho p "B.Do not create a new Folder in the destination" && echo
   read -p " Choose A/B:" option
   
   case "$option" in
@@ -40,22 +48,22 @@ copy() {
       ;;
   *)
       echo
-      echo " ${RED}Choose the Correct Option${NORMAL}"
+      cecho r "Choose the Correct Option"
       ;;
   esac
 }
 # ★★★Calculate the size★★★
 count() {
   cd ~ && cd gd-utils
-  echo "${RED}Remember to add your SAs as Viewer (atleast) in source TD${NORMAL}"
+  cecho r "Remember to add your SAs as Viewer (atleast) in source TD"
   echo "Provide Folder ID"
   read SRC
-  echo "${RED}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~${NORMAL}"
-  echo && echo "Size mode selected
+  cecho r "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+  echo && echo "Size mode selected"
 
-  ${PURPLE}A.Normal Size Info
-  B.Create a html file with tree like pattern
-  C.Create a snap2html index${NORMAL}" && echo
+  cecho p "A.Normal Size Info"
+  cecho p "B.Create a html file with tree like pattern"
+  cecho p "C.Create a snap2html index" && echo
   read -p "Choose A/B/C:" option
   
   case "$option" in
@@ -72,14 +80,14 @@ count() {
       ;;	  
   *)
       echo
-      echo " ${RED}Choose the Correct Option${NORMAL}"
+      cecho r "Choose the Correct Option"
       ;;
   esac
 }
 # ★★★Dedupe The Folder★★★
 dedupe() {
   cd ~ && cd gd-utils
-  echo "${RED}Remember to add your SAs as Content manager (atleast) in source TD${NORMAL}\n"
+  cecho r "Remember to add your SAs as Content manager (atleast) in source TD\n"
   echo "Provide Folder ID\n"
   read SRC 
   node dedupe $SRC -S
@@ -87,15 +95,15 @@ dedupe() {
 
 
 # ★★★Running Gdutils★★★
-echo && echo " ${BLUE}Gdutils${NORMAL} by ${RED}iwestlin${NORMAL} - English version by ${CYAN}Roshanconnor${NORMAL}
+printf "%s by %s -English version by %s\n" "$(cecho b GD-UTILS)" "$(cecho r iwestlin)" "$(cecho c Roshanconnor)"
 
-1.${GREEN}Copy Files to your Teamdrive${NORMAL}
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
-2.${GREEN}Calculate Size${NORMAL}
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
-3.${GREEN}Remove Duplicate Files${NORMAL}
-➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖
-4.${YELLOW}EXIT${NORMAL}" && echo
+cecho g "1.Copy Files to your Teamdrive"
+echo "➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖"
+cecho g "2.Calculate Size"
+echo "➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖"
+cecho g "3.Remove Duplicate Files"
+echo "➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖"
+cecho y "4.EXIT" && echo
 read -p " Choose any Number [1-4]:" option
 
 case "$option" in
@@ -113,6 +121,6 @@ case "$option" in
     ;;
 *)
     echo
-    echo " ${RED}Choose Correct Number from the Options${NORMAL}"
+    cecho r "Choose Correct Number from the Options"
     ;;
 esac
