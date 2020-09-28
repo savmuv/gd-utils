@@ -69,7 +69,7 @@ git clone https://github.com/roshanconnor123/gd-utils && cd gd-utils && npm inst
 ```
 🌠 Downloading Service accounts from your github and configuring it for Gdutils
 ```
-sh sa.sh
+bash sa.sh
 ```
 
 ### 🔳 Installation in Linux
@@ -83,7 +83,7 @@ cd gd-utils && npm install --unsafe-perm=true --allow-root
 ```
 🌠 Downloading Service accounts from your github and configuring it for Gdutils
 ```bash
-sh sa.sh
+bash sa.sh
 ```
 
 ## Usage
@@ -95,13 +95,13 @@ sh sa.sh
 
  Just run the code below in **Termux**
 ```bash
-cd gd-utils && sh gdutils.sh
+cd gd-utils && bash gdutils.sh
 ```
 🔷 Linux
 
  Just run the code below in **Terminal**
 ```bash
-cd gd-utils && sh gdutils.sh
+cd gd-utils && bash gdutils.sh
 ```
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
