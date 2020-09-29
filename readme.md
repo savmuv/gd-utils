@@ -35,7 +35,7 @@ Create a new Repo in Github and name it as `accounts` and Upload all your SAs (j
 
 🌠 Install Nodejs in windows
 
-Go to [Nodejs](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and download the `msi` file and install it (Tick mark the Option saying Install Additional components)
+ Install [Nodejs](https://nodejs.org/dist/v12.18.4/node-v12.18.4-x64.msi) and Make Sure to Install additional components(Tick mark the Option saying Install Additional components)
 
 It is very important to  install the addtional components (of nodejs) as well for this tool to work
 
